@@ -1,0 +1,20 @@
+export const MESSAGES = {
+  notAuthenticated: "Not authenticated",
+  passportNotFound: "Passport not found",
+  passportAlreadyAdded: "Passport already added",
+  stayNotFound: "Stay not found",
+  invalidPassport: "Invalid passport",
+  invalidStay: "Invalid stay",
+  invalidId: "Invalid id",
+  unknownCountry: "Unknown country code",
+  invalidDate: "Date must be YYYY-MM-DD between 1900 and 2100",
+  exitBeforeEntry: "Exit date must be on or after entry date",
+  addPassportFailed: "Could not add the passport",
+  savePassportFailed: "Could not save the passport",
+  removePassportFailed: "Could not remove the passport",
+  saveStayFailed: "Could not save the stay",
+  removeStayFailed: "Could not remove the stay",
+  overlap: (entryDate: string) => `Overlaps a stay that starts on ${entryDate}`,
+  splitStay: (date: string) =>
+    `Another stay in this country touches ${date} with no other country that day; extend that stay instead`,
+} as const;
