@@ -14,26 +14,55 @@ export interface VisaStatus {
 
 export interface PassportOption {
   passportCountry: string;
+  exempt: boolean;
   rule: VisaRule | null;
 }
+
+const OFFICIAL_WEIGHT = 4;
+const PASSPORT_WEIGHT = 2;
+const COUNTRY_WEIGHT = 1;
 
 export function areaOf(destination: string, zones: Zone[]): ReadonlySet<string> {
   const zone = zones.find((candidate) => candidate.id === destination);
   return new Set(zone ? zone.members : [destination]);
 }
 
-function zonesContaining(country: string, zones: Zone[]): string[] {
-  return zones.filter((zone) => zone.members.includes(country)).map((zone) => zone.id);
+export function destinationsFor(country: string, zones: Zone[]): string[] {
+  const zoneIds = zones.filter((zone) => zone.members.includes(country)).map((zone) => zone.id);
+  return [country, ...zoneIds];
+}
+
+export function inForce(rule: VisaRule, onDate: string): boolean {
+  if (rule.validFrom && onDate < rule.validFrom) return false;
+  return !rule.validUntil || onDate <= rule.validUntil;
 }
 
 function appliesToPassport(rule: VisaRule, passportCountry: string): boolean {
+  if (rule.exemptPassports.includes(passportCountry)) return false;
   return rule.passports === "all" || rule.passports.includes(passportCountry);
 }
 
+export function isExempt(
+  rules: VisaRule[],
+  zones: Zone[],
+  country: string,
+  passportCountry: string,
+  onDate: string,
+): boolean {
+  const destinations = destinationsFor(country, zones);
+  return rules.some(
+    (rule) =>
+      destinations.includes(rule.destination) &&
+      rule.exemptPassports.includes(passportCountry) &&
+      inForce(rule, onDate),
+  );
+}
+
 function specificity(rule: VisaRule, country: string): number {
-  const passportSpecific = rule.passports === "all" ? 0 : 2;
-  const countrySpecific = rule.destination === country ? 1 : 0;
-  return passportSpecific + countrySpecific;
+  const official = rule.source.official ? OFFICIAL_WEIGHT : 0;
+  const passportSpecific = rule.passports === "all" ? 0 : PASSPORT_WEIGHT;
+  const countrySpecific = rule.destination === country ? COUNTRY_WEIGHT : 0;
+  return official + passportSpecific + countrySpecific;
 }
 
 export function findVisaRule(
@@ -41,10 +70,14 @@ export function findVisaRule(
   zones: Zone[],
   country: string,
   passportCountry: string,
+  onDate: string,
 ): VisaRule | null {
-  const destinations = [country, ...zonesContaining(country, zones)];
+  const destinations = destinationsFor(country, zones);
   const matches = rules.filter(
-    (rule) => destinations.includes(rule.destination) && appliesToPassport(rule, passportCountry),
+    (rule) =>
+      destinations.includes(rule.destination) &&
+      appliesToPassport(rule, passportCountry) &&
+      inForce(rule, onDate),
   );
   return (
     matches.sort(
@@ -54,20 +87,24 @@ export function findVisaRule(
   );
 }
 
+function optionRank(option: PassportOption): number {
+  if (option.exempt) return Number.POSITIVE_INFINITY;
+  return option.rule ? option.rule.allowedDays : Number.NEGATIVE_INFINITY;
+}
+
 export function rankPassports(
   rules: VisaRule[],
   zones: Zone[],
   country: string,
   passportCountries: string[],
+  onDate: string,
 ): PassportOption[] {
   const options = passportCountries.map((passportCountry) => ({
     passportCountry,
-    rule: findVisaRule(rules, zones, country, passportCountry),
+    exempt: isExempt(rules, zones, country, passportCountry, onDate),
+    rule: findVisaRule(rules, zones, country, passportCountry, onDate),
   }));
-  return options.sort((a, b) => {
-    if (!a.rule || !b.rule) return Number(Boolean(b.rule)) - Number(Boolean(a.rule));
-    return b.rule.allowedDays - a.rule.allowedDays;
-  });
+  return options.sort((a, b) => optionRank(b) - optionRank(a));
 }
 
 function rollingUsage(

@@ -5,7 +5,9 @@ export type DayCounting = "inclusive" | "midnight";
 export interface RuleSource {
   url: string;
   official: boolean;
+  retrievedAt: string;
   verifiedAt: string | null;
+  note: string | null;
 }
 
 export type VisaWindow =
@@ -16,10 +18,13 @@ export interface VisaRule {
   id: string;
   destination: string;
   passports: string[] | "all";
+  exemptPassports: string[];
   allowedDays: number;
   window: VisaWindow;
   extensionDays: number | null;
   reportingIntervalDays: number | null;
+  validFrom: string | null;
+  validUntil: string | null;
   source: RuleSource;
 }
 
@@ -27,6 +32,7 @@ export interface Zone {
   id: string;
   name: string;
   members: string[];
+  source: RuleSource;
 }
 
 export type TaxPeriod =
@@ -39,6 +45,20 @@ export interface TaxRule {
   thresholdDays: number;
   period: TaxPeriod;
   dayCounting: DayCounting;
+  source: RuleSource;
+}
+
+export type EntryRequirementKind =
+  | "visaFree"
+  | "visaOnArrival"
+  | "eta"
+  | "eVisa"
+  | "visaRequired"
+  | "noAdmission";
+
+export interface EntryRequirement {
+  kind: EntryRequirementKind;
+  days: number | null;
   source: RuleSource;
 }
 
