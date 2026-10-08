@@ -1,3 +1,4 @@
+import { laterDate } from "@/lib/dates";
 import type { StayInput } from "@/lib/schemas/stays";
 import type { Stay } from "@/types/db";
 
@@ -25,7 +26,7 @@ function sharedBoundaryDay(a: StayRange, b: StayRange): string | null {
   const touches =
     startsOnOrBeforeEndOf(a.entry_date, b) && startsOnOrBeforeEndOf(b.entry_date, a);
   if (!touches) return null;
-  return a.entry_date > b.entry_date ? a.entry_date : b.entry_date;
+  return laterDate(a.entry_date, b.entry_date);
 }
 
 function isSameStay(a: StayInput, b: ExistingStay): boolean {
@@ -34,7 +35,7 @@ function isSameStay(a: StayInput, b: ExistingStay): boolean {
   );
 }
 
-function coversDay(range: StayRange, day: string): boolean {
+export function coversDay(range: StayRange, day: string): boolean {
   return range.entry_date <= day && (range.exit_date === null || day <= range.exit_date);
 }
 
