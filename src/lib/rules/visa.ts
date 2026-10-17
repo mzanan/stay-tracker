@@ -107,7 +107,7 @@ export function rankPassports(
   return options.sort((a, b) => optionRank(b) - optionRank(a));
 }
 
-function rollingUsage(
+export function rollingUsage(
   stays: StayDates[],
   area: ReadonlySet<string>,
   periodDays: number,
@@ -134,15 +134,27 @@ export function latestExitIfStaying(
     entryDate,
   );
 
+  const sortedEarlier = [...earlierDays].sort();
+  let droppedOut = 0;
   let latestOk = addDays(entryDate, -1);
   for (let offset = 0; offset < periodDays; offset++) {
     const day = addDays(entryDate, offset);
     const windowStart = trailingWindow(day, periodDays).start;
-    const earlierInWindow = [...earlierDays].filter((earlier) => earlier >= windowStart).length;
+    while (droppedOut < sortedEarlier.length && sortedEarlier[droppedOut] < windowStart) droppedOut++;
+    const earlierInWindow = sortedEarlier.length - droppedOut;
     if (earlierInWindow + offset + 1 > rule.allowedDays) break;
     latestOk = day;
   }
   return latestOk;
+}
+
+export function maxStayDays(
+  stays: StayDates[],
+  rule: VisaRule,
+  zones: Zone[],
+  entryDate: string,
+): number {
+  return daysBetween(entryDate, latestExitIfStaying(stays, rule, zones, entryDate)) + 1;
 }
 
 function nextReportDue(
