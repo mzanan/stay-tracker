@@ -1,4 +1,5 @@
 import { addDays, earlierDate, eachDay, isoDate, laterDate, trailingWindow } from "@/lib/dates";
+import { countryArea } from "@/lib/rules/area";
 import { presenceDays } from "@/lib/rules/presence";
 import type { DateRange } from "@/types/dates";
 import type { StayDates, TaxRule } from "@/types/rules";
@@ -40,7 +41,7 @@ function projectedPresence(
   period: DateRange,
   today: string,
 ): number {
-  const country = new Set([rule.country]);
+  const country = countryArea(rule.country);
   if (rule.period.kind !== "rolling") {
     return presenceDays(stays, country, period, today, rule.dayCounting).size;
   }
@@ -64,7 +65,7 @@ function projectedPresence(
 
 export function taxStatus(stays: StayDates[], rule: TaxRule, today: string): TaxStatus {
   const period = taxPeriodFor(rule, today);
-  const country = new Set([rule.country]);
+  const country = countryArea(rule.country);
   const soFar = { start: period.start, end: earlierDate(period.end, today) };
   const daysPresent = presenceDays(stays, country, soFar, today, rule.dayCounting).size;
   const projectedDays = projectedPresence(stays, rule, period, today);

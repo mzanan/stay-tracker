@@ -1,6 +1,7 @@
 import { addDays, daysBetween, trailingWindow } from "@/lib/dates";
+import { countryArea, isZoneMember, zoneArea } from "@/lib/rules/area";
 import { areaEntryDate, presenceDays, stayCoveringDay } from "@/lib/rules/presence";
-import type { StayDates, VisaRule, Zone } from "@/types/rules";
+import type { Area, StayDates, VisaRule, Zone } from "@/types/rules";
 
 export interface VisaStatus {
   rule: VisaRule;
@@ -22,13 +23,13 @@ const OFFICIAL_WEIGHT = 4;
 const PASSPORT_WEIGHT = 2;
 const COUNTRY_WEIGHT = 1;
 
-export function areaOf(destination: string, zones: Zone[]): ReadonlySet<string> {
+export function areaOf(destination: string, zones: Zone[]): Area {
   const zone = zones.find((candidate) => candidate.id === destination);
-  return new Set(zone ? zone.members : [destination]);
+  return zone ? zoneArea(zone) : countryArea(destination);
 }
 
-export function destinationsFor(country: string, zones: Zone[]): string[] {
-  const zoneIds = zones.filter((zone) => zone.members.includes(country)).map((zone) => zone.id);
+export function destinationsFor(country: string, zones: Zone[], onDate: string | null = null): string[] {
+  const zoneIds = zones.filter((zone) => isZoneMember(zone, country, onDate)).map((zone) => zone.id);
   return [country, ...zoneIds];
 }
 
@@ -49,7 +50,7 @@ export function isExempt(
   passportCountry: string,
   onDate: string,
 ): boolean {
-  const destinations = destinationsFor(country, zones);
+  const destinations = destinationsFor(country, zones, onDate);
   return rules.some(
     (rule) =>
       destinations.includes(rule.destination) &&
@@ -72,7 +73,7 @@ export function findVisaRule(
   passportCountry: string,
   onDate: string,
 ): VisaRule | null {
-  const destinations = destinationsFor(country, zones);
+  const destinations = destinationsFor(country, zones, onDate);
   const matches = rules.filter(
     (rule) =>
       destinations.includes(rule.destination) &&
@@ -109,7 +110,7 @@ export function rankPassports(
 
 export function rollingUsage(
   stays: StayDates[],
-  area: ReadonlySet<string>,
+  area: Area,
   periodDays: number,
   day: string,
 ): number {

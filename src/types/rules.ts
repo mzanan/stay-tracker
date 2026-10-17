@@ -28,12 +28,19 @@ export interface VisaRule {
   source: RuleSource;
 }
 
+export interface ZoneMember {
+  country: string;
+  memberFrom: string;
+}
+
 export interface Zone {
   id: string;
   name: string;
-  members: string[];
+  members: ZoneMember[];
   source: RuleSource;
 }
+
+export type Area = ReadonlyMap<string, string>;
 
 export type TaxPeriod =
   | { kind: "calendarYear" }

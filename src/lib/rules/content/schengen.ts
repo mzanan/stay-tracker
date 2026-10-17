@@ -11,16 +11,28 @@ const EU_MEMBERS = [
   "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE",
 ];
 const FREE_MOVEMENT_NON_EU = ["IS", "NO", "LI", "CH"];
-const NOT_IN_SCHENGEN = new Set(["CY", "IE"]);
+const ZONE_RETRIEVED_AT = "2026-10-17";
+
+const MEMBER_FROM: Record<string, string> = {
+  BE: "1995-03-26", DE: "1995-03-26", ES: "1995-03-26", FR: "1995-03-26",
+  LU: "1995-03-26", NL: "1995-03-26", PT: "1995-03-26",
+  IT: "1997-10-26", AT: "1997-12-01", GR: "2000-03-26",
+  DK: "2001-03-25", FI: "2001-03-25", IS: "2001-03-25", NO: "2001-03-25", SE: "2001-03-25",
+  CZ: "2007-12-21", EE: "2007-12-21", HU: "2007-12-21", LV: "2007-12-21", LT: "2007-12-21",
+  MT: "2007-12-21", PL: "2007-12-21", SK: "2007-12-21", SI: "2007-12-21",
+  CH: "2008-12-12", LI: "2011-12-19",
+  HR: "2023-01-01",
+  BG: "2024-03-31", RO: "2024-03-31",
+};
 
 export const schengenZone: Zone = {
   id: SCHENGEN_ID,
   name: "Schengen Area",
-  members: [...EU_MEMBERS.filter((code) => !NOT_IN_SCHENGEN.has(code)), ...FREE_MOVEMENT_NON_EU],
+  members: Object.entries(MEMBER_FROM).map(([country, memberFrom]) => ({ country, memberFrom })),
   source: officialSource(
     "https://home-affairs.ec.europa.eu/policies/schengen/schengen-area_en",
-    RETRIEVED_AT,
-    "29 countries; Bulgaria and Romania joined on 1 Jan 2025. The page gives the count, not the names.",
+    ZONE_RETRIEVED_AT,
+    "memberFrom = date Articles 18-22 of the Schengen Convention (90/180 short stay) apply, whatever the border type. HR: Council Decision (EU) 2022/2451 Art. 1(1). BG/RO: Council Decision (EU) 2024/210 Art. 1 (air and sea checks lifted that day, land checks only on 2025-01-01, stays count from 2024-03-31). Pre-2013 dates from national government summaries, not re-verified against the Official Journal; they predate the 90/180 rule.",
   ),
 };
 

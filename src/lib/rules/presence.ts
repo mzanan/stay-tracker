@@ -1,7 +1,8 @@
 import { addDays, earlierDate, eachDay, laterDate } from "@/lib/dates";
+import { inAreaOn } from "@/lib/rules/area";
 import { coversDay } from "@/lib/stays";
 import type { DateRange } from "@/types/dates";
-import type { DayCounting, StayDates } from "@/types/rules";
+import type { Area, DayCounting, StayDates } from "@/types/rules";
 
 function presenceRange(
   stay: StayDates,
@@ -16,17 +17,18 @@ function presenceRange(
 
 export function presenceDays(
   stays: StayDates[],
-  countries: ReadonlySet<string>,
+  area: Area,
   window: DateRange,
   today: string,
   counting: DayCounting = "inclusive",
 ): Set<string> {
   const days = new Set<string>();
   for (const stay of stays) {
-    if (!countries.has(stay.country)) continue;
+    const memberFrom = area.get(stay.country);
+    if (memberFrom === undefined) continue;
     const range = presenceRange(stay, today, counting);
     if (!range) continue;
-    const start = laterDate(range.start, window.start);
+    const start = laterDate(laterDate(range.start, window.start), memberFrom);
     const end = earlierDate(range.end, window.end);
     if (start > end) continue;
     for (const day of eachDay(start, end)) days.add(day);
@@ -36,24 +38,24 @@ export function presenceDays(
 
 export function stayCoveringDay(
   stays: StayDates[],
-  countries: ReadonlySet<string>,
+  area: Area,
   day: string,
 ): StayDates | null {
   const covering = stays.filter(
-    (stay) => countries.has(stay.country) && coversDay(stay, day),
+    (stay) => inAreaOn(area, stay.country, day) && coversDay(stay, day),
   );
   return covering.sort((a, b) => b.entry_date.localeCompare(a.entry_date))[0] ?? null;
 }
 
 function leftAreaBetween(
   stays: StayDates[],
-  area: ReadonlySet<string>,
+  area: Area,
   from: string,
   to: string,
 ): boolean {
   return stays.some(
     (stay) =>
-      !area.has(stay.country) &&
+      !inAreaOn(area, stay.country, laterDate(stay.entry_date, from)) &&
       stay.entry_date <= to &&
       (stay.exit_date === null || stay.exit_date >= from),
   );
@@ -69,17 +71,20 @@ function continuesInto(previous: StayDates, next: StayDates): boolean {
 
 export function areaEntryDate(
   stays: StayDates[],
-  area: ReadonlySet<string>,
+  area: Area,
   current: StayDates,
 ): string {
   let stay = current;
   for (;;) {
     const entry = stay.entry_date;
+    const memberFrom = area.get(stay.country);
+    if (memberFrom !== undefined && entry < memberFrom) return memberFrom;
     const previous = stays
       .filter(
         (candidate) =>
           candidate !== stay &&
-          area.has(candidate.country) &&
+          candidate.exit_date !== null &&
+          inAreaOn(area, candidate.country, candidate.exit_date) &&
           candidate.entry_date < entry &&
           continuesInto(candidate, stay),
       )

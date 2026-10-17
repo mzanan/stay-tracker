@@ -7,6 +7,7 @@ import {
 } from "@/lib/rules/content";
 import { communitySource, defineVisaRule } from "@/lib/rules/define";
 import passportIndex from "@/lib/rules/seed/passportIndex.json";
+import { countryArea } from "@/lib/rules/area";
 import { stayCoveringDay } from "@/lib/rules/presence";
 import { validateRuleSet } from "@/lib/rules/validate";
 import { destinationsFor, findVisaRule, visaStatus, type VisaStatus } from "@/lib/rules/visa";
@@ -97,7 +98,7 @@ export function currentVisaStatus(
   passportCountry: string,
   today: string,
 ): VisaStatus | null {
-  const current = stayCoveringDay(stays, new Set([destination]), today);
+  const current = stayCoveringDay(stays, countryArea(destination), today);
   if (!current) return null;
   const rules = visaRulesFor(destination, [passportCountry], current.entry_date);
   const rule = findVisaRule(rules, OFFICIAL_ZONES, destination, passportCountry, current.entry_date);
