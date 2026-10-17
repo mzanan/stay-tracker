@@ -1,59 +1,25 @@
+import type { z } from "zod";
+
+import type {
+  ruleFileSchema,
+  ruleSourceSchema,
+  taxRuleSchema,
+  visaRuleSchema,
+  zoneSchema,
+} from "@/lib/schemas/rules";
 import type { Stay } from "@/types/db";
 
-export type DayCounting = "inclusive" | "midnight";
-
-export interface RuleSource {
-  url: string;
-  official: boolean;
-  retrievedAt: string;
-  verifiedAt: string | null;
-  note: string | null;
-}
-
-export type VisaWindow =
-  | { kind: "perEntry" }
-  | { kind: "rolling"; periodDays: number };
-
-export interface VisaRule {
-  id: string;
-  destination: string;
-  passports: string[] | "all";
-  exemptPassports: string[];
-  allowedDays: number;
-  window: VisaWindow;
-  extensionDays: number | null;
-  reportingIntervalDays: number | null;
-  validFrom: string | null;
-  validUntil: string | null;
-  source: RuleSource;
-}
-
-export interface ZoneMember {
-  country: string;
-  memberFrom: string;
-}
-
-export interface Zone {
-  id: string;
-  name: string;
-  members: ZoneMember[];
-  source: RuleSource;
-}
+export type RuleSource = z.output<typeof ruleSourceSchema>;
+export type VisaRule = z.output<typeof visaRuleSchema>;
+export type VisaWindow = VisaRule["window"];
+export type Zone = z.output<typeof zoneSchema>;
+export type ZoneMember = Zone["members"][number];
+export type TaxRule = z.output<typeof taxRuleSchema>;
+export type TaxPeriod = TaxRule["period"];
+export type DayCounting = TaxRule["dayCounting"];
+export type RuleFile = z.output<typeof ruleFileSchema>;
 
 export type Area = ReadonlyMap<string, string>;
-
-export type TaxPeriod =
-  | { kind: "calendarYear" }
-  | { kind: "taxYear"; startMonth: number; startDay: number }
-  | { kind: "rolling"; periodDays: number };
-
-export interface TaxRule {
-  country: string;
-  thresholdDays: number;
-  period: TaxPeriod;
-  dayCounting: DayCounting;
-  source: RuleSource;
-}
 
 export type EntryRequirementKind =
   | "visaFree"

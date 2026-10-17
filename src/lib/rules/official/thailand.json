@@ -1,0 +1,133 @@
+{
+  "visaRules": [
+    {
+      "id": "th-exemption-30",
+      "destination": "TH",
+      "passports": ["AU", "AT", "BH", "BE", "BT", "BN", "BG", "CA", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "FJ", "GE", "DE", "GR", "HU", "IS", "IN", "ID", "IE", "IL", "IT", "JP", "JO", "KW", "KG", "LV", "LI", "LT", "LU", "MY", "MV", "MT", "NL", "NZ", "NO", "OM", "PH", "PL", "PT", "QA", "RO", "SA", "SG", "SK", "SI", "ZA", "ES", "SE", "CH", "TW", "TR", "AE", "GB", "UA", "US"],
+      "exemptPassports": [],
+      "allowedDays": 30,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": 30,
+      "reportingIntervalDays": 90,
+      "validFrom": "2026-09-15",
+      "validUntil": null,
+      "source": {
+        "url": "https://washingtondc.thaiembassy.org/en/page/visaexempt-voajul2024",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Royal Thai Embassy list (MFA infographic) effective 15 Sep 2026, final list of 60 countries for the 30-day scheme (the earlier 54 was the May 2026 Cabinet stage). 90-day residence report: https://thaiconsulatela.thaiembassy.org/en/publicservice/foreigners-staying-in-thailand-more-than-90-days"
+      }
+    },
+    {
+      "id": "th-exemption-15",
+      "destination": "TH",
+      "passports": ["SC", "MU"],
+      "exemptPassports": [],
+      "allowedDays": 15,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": 90,
+      "validFrom": "2026-09-15",
+      "validUntil": null,
+      "source": {
+        "url": "https://washingtondc.thaiembassy.org/en/page/visaexempt-voajul2024",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Royal Thai Embassy list (MFA infographic) effective 15 Sep 2026, final list of 60 countries for the 30-day scheme (the earlier 54 was the May 2026 Cabinet stage). 90-day residence report: https://thaiconsulatela.thaiembassy.org/en/publicservice/foreigners-staying-in-thailand-more-than-90-days"
+      }
+    },
+    {
+      "id": "th-bilateral-14",
+      "destination": "TH",
+      "passports": ["KH", "MM"],
+      "exemptPassports": [],
+      "allowedDays": 14,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": 90,
+      "validFrom": "2026-09-15",
+      "validUntil": null,
+      "source": {
+        "url": "https://washingtondc.thaiembassy.org/en/page/visaexempt-voajul2024",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Royal Thai Embassy list (MFA infographic) effective 15 Sep 2026, final list of 60 countries for the 30-day scheme (the earlier 54 was the May 2026 Cabinet stage). 90-day residence report: https://thaiconsulatela.thaiembassy.org/en/publicservice/foreigners-staying-in-thailand-more-than-90-days"
+      }
+    },
+    {
+      "id": "th-bilateral-30",
+      "destination": "TH",
+      "passports": ["CN", "KZ", "MO", "RU", "VN", "HK", "LA", "MN", "TL"],
+      "exemptPassports": [],
+      "allowedDays": 30,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": 90,
+      "validFrom": "2026-09-15",
+      "validUntil": null,
+      "source": {
+        "url": "https://washingtondc.thaiembassy.org/en/page/visaexempt-voajul2024",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Royal Thai Embassy list (MFA infographic) effective 15 Sep 2026, final list of 60 countries for the 30-day scheme (the earlier 54 was the May 2026 Cabinet stage). 90-day residence report: https://thaiconsulatela.thaiembassy.org/en/publicservice/foreigners-staying-in-thailand-more-than-90-days"
+      }
+    },
+    {
+      "id": "th-bilateral-90",
+      "destination": "TH",
+      "passports": ["AR", "BR", "CL", "PE", "KR"],
+      "exemptPassports": [],
+      "allowedDays": 90,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": 90,
+      "validFrom": "2026-09-15",
+      "validUntil": null,
+      "source": {
+        "url": "https://washingtondc.thaiembassy.org/en/page/visaexempt-voajul2024",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Royal Thai Embassy list (MFA infographic) effective 15 Sep 2026, final list of 60 countries for the 30-day scheme (the earlier 54 was the May 2026 Cabinet stage). 90-day residence report: https://thaiconsulatela.thaiembassy.org/en/publicservice/foreigners-staying-in-thailand-more-than-90-days"
+      }
+    }
+  ],
+  "taxRules": [
+    {
+      "country": "TH",
+      "thresholdDays": 180,
+      "period": {
+        "kind": "calendarYear"
+      },
+      "dayCounting": "inclusive",
+      "source": {
+        "url": "https://www.rd.go.th/english/37749.html",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Revenue Code Section 41: 180 days or more in any tax (calendar) year. The Revenue Department summary page 6045.html says more than 180; the Code prevails."
+      }
+    }
+  ],
+  "zones": []
+}

@@ -1,0 +1,22 @@
+{
+  "visaRules": [],
+  "taxRules": [
+    {
+      "country": "MY",
+      "thresholdDays": 182,
+      "period": {
+        "kind": "calendarYear"
+      },
+      "dayCounting": "inclusive",
+      "source": {
+        "url": "https://www.hasil.gov.my/en/individu/taraf-mastautin/",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Income Tax Act 1967 s.7(1)(a): 182 days or more in the basis year (calendar year). Part of a day counts as a whole day: Public Ruling 11/2017 para 5.3 https://www.hasil.gov.my/wp-content/uploads/PR_11_2017.pdf"
+      }
+    }
+  ],
+  "zones": []
+}

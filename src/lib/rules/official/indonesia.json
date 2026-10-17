@@ -1,0 +1,46 @@
+{
+  "visaRules": [
+    {
+      "id": "id-exemption-30",
+      "destination": "ID",
+      "passports": ["BN", "MY", "TH", "VN", "PH", "KH", "SG", "MM", "LA", "TL", "SR", "CO", "HK", "TR", "BR", "PE", "KZ", "MO", "BY"],
+      "exemptPassports": [],
+      "allowedDays": 30,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": null,
+      "validFrom": null,
+      "validUntil": null,
+      "source": {
+        "url": "https://www.imigrasi.go.id/wna/daftar-negara-voa-bvk-calling-visa/daftar-negara-bebas-visa-kunjungan",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Passport list from the Directorate General of Immigration. 30-day, non-extendable stay: visa A1 page https://www.imigrasi.go.id/wna/daftar-visa-indonesia/A1"
+      }
+    }
+  ],
+  "taxRules": [
+    {
+      "country": "ID",
+      "thresholdDays": 184,
+      "period": {
+        "kind": "rolling",
+        "periodDays": 365
+      },
+      "dayCounting": "inclusive",
+      "source": {
+        "url": "https://pajak.go.id/en/node/118835",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "PER-23/PJ/2025: more than 183 days within 12 months; part of a day counts as a full day."
+      }
+    }
+  ],
+  "zones": []
+}

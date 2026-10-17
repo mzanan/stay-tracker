@@ -1,0 +1,392 @@
+{
+  "visaRules": [
+    {
+      "id": "schengen-short-stay",
+      "destination": "SCHENGEN",
+      "passports": "all",
+      "exemptPassports": ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "IS", "NO", "LI", "CH"],
+      "allowedDays": 90,
+      "window": {
+        "kind": "rolling",
+        "periodDays": 180
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": null,
+      "validFrom": null,
+      "validUntil": null,
+      "source": {
+        "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0399",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Schengen Borders Code Art. 6: 90 days in any 180; entry and exit days both count. Some nationalities still need a visa; bilateral waivers can add days in single countries (not tracked yet)."
+      }
+    }
+  ],
+  "taxRules": [],
+  "zones": [
+    {
+      "id": "SCHENGEN",
+      "name": "Schengen Area",
+      "members": [
+        {
+          "country": "BE",
+          "memberFrom": "1995-03-26",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:41994D0029",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Executive Committee SCH/Com-ex (94)29: Convention in force in its entirety from 26 March 1995 for the initial signatory states."
+          }
+        },
+        {
+          "country": "DE",
+          "memberFrom": "1995-03-26",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:41994D0029",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Executive Committee SCH/Com-ex (94)29: Convention in force in its entirety from 26 March 1995 for the initial signatory states."
+          }
+        },
+        {
+          "country": "ES",
+          "memberFrom": "1995-03-26",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:41994D0029",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Executive Committee SCH/Com-ex (94)29: Convention in force in its entirety from 26 March 1995 for the initial signatory states."
+          }
+        },
+        {
+          "country": "FR",
+          "memberFrom": "1995-03-26",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:41994D0029",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Executive Committee SCH/Com-ex (94)29: Convention in force in its entirety from 26 March 1995 for the initial signatory states."
+          }
+        },
+        {
+          "country": "LU",
+          "memberFrom": "1995-03-26",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:41994D0029",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Executive Committee SCH/Com-ex (94)29: Convention in force in its entirety from 26 March 1995 for the initial signatory states."
+          }
+        },
+        {
+          "country": "NL",
+          "memberFrom": "1995-03-26",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:41994D0029",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Executive Committee SCH/Com-ex (94)29: Convention in force in its entirety from 26 March 1995 for the initial signatory states."
+          }
+        },
+        {
+          "country": "PT",
+          "memberFrom": "1995-03-26",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:41994D0029",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Executive Committee SCH/Com-ex (94)29: Convention in force in its entirety from 26 March 1995 for the initial signatory states."
+          }
+        },
+        {
+          "country": "IT",
+          "memberFrom": "1997-10-26",
+          "source": {
+            "url": "https://zoek.officielebekendmakingen.nl/trb-1998-262.pdf",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Executive Committee SCH/Com-ex (97) 27 rev 4 (listed in Council Decision 1999/435/EC), printed in the Dutch Tractatenblad 1998, 262: Convention put into effect for Italy on 26 October 1997. No Gazzetta Ufficiale notice found."
+          }
+        },
+        {
+          "country": "AT",
+          "memberFrom": "1997-12-01",
+          "source": {
+            "url": "https://www.ris.bka.gv.at/Dokument.wxe?Abfrage=BgblPdf&Dokumentnummer=1997_205_3",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "BGBl. III Nr. 205/1997: Austria's accession to the Schengen Convention put into force on 1 December 1997 (also Executive Committee SCH/Com-ex (97) 28 rev 4, printed in Tractatenblad 1998, 262)."
+          }
+        },
+        {
+          "country": "GR",
+          "memberFrom": "2000-03-26",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:31999D0848",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 1999/848/EC on the full application of the Schengen acquis in Greece: internal controls lifted by 26 March 2000 at the latest (Convention formally in force from 1 December 1997, SCH/Com-ex (97) 29)."
+          }
+        },
+        {
+          "country": "DK",
+          "memberFrom": "2001-03-25",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32000D0777",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2000/777/EC Art. 1: Schengen acquis applies from 25 March 2001."
+          }
+        },
+        {
+          "country": "FI",
+          "memberFrom": "2001-03-25",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32000D0777",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2000/777/EC Art. 1: Schengen acquis applies from 25 March 2001."
+          }
+        },
+        {
+          "country": "IS",
+          "memberFrom": "2001-03-25",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32000D0777",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2000/777/EC Art. 1: Schengen acquis applies from 25 March 2001."
+          }
+        },
+        {
+          "country": "NO",
+          "memberFrom": "2001-03-25",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32000D0777",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2000/777/EC Art. 1: Schengen acquis applies from 25 March 2001."
+          }
+        },
+        {
+          "country": "SE",
+          "memberFrom": "2001-03-25",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32000D0777",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2000/777/EC Art. 1: Schengen acquis applies from 25 March 2001."
+          }
+        },
+        {
+          "country": "CZ",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "EE",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "HU",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "LV",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "LT",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "MT",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "PL",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "SK",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "SI",
+          "memberFrom": "2007-12-21",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32007D0801",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2007/801/EC Art. 1(1): from 21 December 2007, Annex I includes Convention Arts. 14-25."
+          }
+        },
+        {
+          "country": "CH",
+          "memberFrom": "2008-12-12",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008D0903",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2008/903/EC Art. 1(1): from 12 December 2008."
+          }
+        },
+        {
+          "country": "LI",
+          "memberFrom": "2011-12-19",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32011D0842",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision 2011/842/EU Art. 1(1): from 19 December 2011."
+          }
+        },
+        {
+          "country": "HR",
+          "memberFrom": "2023-01-01",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022D2451",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision (EU) 2022/2451 Art. 1(1): Annex provisions (Convention Arts. 18-22) apply from 1 January 2023."
+          }
+        },
+        {
+          "country": "BG",
+          "memberFrom": "2024-03-31",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024D0210",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision (EU) 2024/210 Art. 1: Annex provisions (Convention Arts. 18-22) apply from 31 March 2024, whatever the border type."
+          }
+        },
+        {
+          "country": "RO",
+          "memberFrom": "2024-03-31",
+          "source": {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024D0210",
+            "official": true,
+            "retrievedAt": "2026-10-17",
+            "verifiedAt": "2026-10-17",
+            "underReview": false,
+            "note": "Council Decision (EU) 2024/210 Art. 1: Annex provisions (Convention Arts. 18-22) apply from 31 March 2024, whatever the border type."
+          }
+        }
+      ],
+      "source": {
+        "url": "https://home-affairs.ec.europa.eu/policies/schengen/schengen-area_en",
+        "official": true,
+        "retrievedAt": "2026-10-17",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "29 countries: 25 EU Member States plus Iceland, Norway, Switzerland and Liechtenstein; Cyprus and Ireland excluded. memberFrom = date the Convention's short-stay rules apply; each member cites its own decision."
+      }
+    }
+  ]
+}
