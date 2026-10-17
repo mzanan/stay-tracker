@@ -1,5 +1,6 @@
 import { addDays, daysBetween, trailingWindow } from "@/lib/dates";
-import { areaEntryDate, countryArea, presenceDays, stayCoveringDay } from "@/lib/rules/presence";
+import { countryArea, isZoneMember, zoneArea } from "@/lib/rules/area";
+import { areaEntryDate, presenceDays, stayCoveringDay } from "@/lib/rules/presence";
 import type { Area, StayDates, VisaRule, Zone } from "@/types/rules";
 
 export interface VisaStatus {
@@ -24,14 +25,7 @@ const COUNTRY_WEIGHT = 1;
 
 export function areaOf(destination: string, zones: Zone[]): Area {
   const zone = zones.find((candidate) => candidate.id === destination);
-  if (!zone) return countryArea(destination);
-  return new Map(zone.members.map((member) => [member.country, member.memberFrom]));
-}
-
-function isZoneMember(zone: Zone, country: string, onDate: string | null): boolean {
-  return zone.members.some(
-    (member) => member.country === country && (onDate === null || onDate >= member.memberFrom),
-  );
+  return zone ? zoneArea(zone) : countryArea(destination);
 }
 
 export function destinationsFor(country: string, zones: Zone[], onDate: string | null = null): string[] {

@@ -7,7 +7,8 @@ import {
 } from "@/lib/rules/content";
 import { communitySource, defineVisaRule } from "@/lib/rules/define";
 import passportIndex from "@/lib/rules/seed/passportIndex.json";
-import { countryArea, stayCoveringDay } from "@/lib/rules/presence";
+import { countryArea } from "@/lib/rules/area";
+import { stayCoveringDay } from "@/lib/rules/presence";
 import { validateRuleSet } from "@/lib/rules/validate";
 import { destinationsFor, findVisaRule, visaStatus, type VisaStatus } from "@/lib/rules/visa";
 import type { EntryRequirement, EntryRequirementKind, StayDates, VisaRule } from "@/types/rules";

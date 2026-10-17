@@ -1,4 +1,5 @@
 import { isCountryCode } from "@/lib/countries";
+import { zoneCountries } from "@/lib/rules/area";
 import { isIsoDate, isoDate } from "@/lib/dates";
 import type { RuleSource, TaxRule, VisaRule, Zone } from "@/types/rules";
 
@@ -66,7 +67,7 @@ export function validateRuleSet(
   const zoneIds = new Set(zones.map((zone) => zone.id));
   const errors = zones.flatMap((zone) => [
     ...sourceErrors(`zone ${zone.id}`, zone.source),
-    ...countryListErrors(`zone ${zone.id}`, zone.members.map((member) => member.country)),
+    ...countryListErrors(`zone ${zone.id}`, zoneCountries(zone)),
     ...zone.members
       .filter((member) => !isIsoDate(member.memberFrom))
       .map((member) => `zone ${zone.id}: invalid memberFrom for ${member.country}`),

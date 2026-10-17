@@ -1,18 +1,8 @@
 import { addDays, earlierDate, eachDay, laterDate } from "@/lib/dates";
+import { inAreaOn } from "@/lib/rules/area";
 import { coversDay } from "@/lib/stays";
 import type { DateRange } from "@/types/dates";
 import type { Area, DayCounting, StayDates } from "@/types/rules";
-
-const ALWAYS_MEMBER = "0000-01-01";
-
-export function countryArea(country: string): Area {
-  return new Map([[country, ALWAYS_MEMBER]]);
-}
-
-export function inAreaOn(area: Area, country: string, day: string): boolean {
-  const memberFrom = area.get(country);
-  return memberFrom !== undefined && day >= memberFrom;
-}
 
 function presenceRange(
   stay: StayDates,

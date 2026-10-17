@@ -1,5 +1,6 @@
 import { addDays, earlierDate, eachDay, isoDate, laterDate, trailingWindow } from "@/lib/dates";
-import { countryArea, presenceDays } from "@/lib/rules/presence";
+import { countryArea } from "@/lib/rules/area";
+import { presenceDays } from "@/lib/rules/presence";
 import type { DateRange } from "@/types/dates";
 import type { StayDates, TaxRule } from "@/types/rules";
 
