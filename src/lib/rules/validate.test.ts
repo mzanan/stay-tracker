@@ -16,6 +16,20 @@ describe("overlapping rules", () => {
   const generous = { ...base, id: "th-generous", passports: ["US"], allowedDays: 60 };
   const strict = { ...base, id: "th-strict", passports: ["US", "CA"], allowedDays: 30 };
 
+  it("fails when a passport is exempt in one rule and listed in another", () => {
+    const exempting = { ...base, id: "th-exempting", passports: "all" as const, exemptPassports: ["US"] };
+    expect(validateRuleSet([exempting, generous], [], [])).toContain(
+      "visa rules th-exempting and th-generous: US exempt in one, listed in the other",
+    );
+  });
+
+  it("fails when a rule lists and exempts the same passport", () => {
+    const contradictory = { ...base, id: "th-contradictory", passports: ["US"], exemptPassports: ["US"] };
+    expect(validateRuleSet([contradictory], [], [])).toContain(
+      "visa rule th-contradictory: US both listed and exempt",
+    );
+  });
+
   it("fails the rule set", () => {
     expect(validateRuleSet([generous, strict], [], [])).toContain(
       "visa rules th-generous and th-strict: overlap for US",

@@ -1,6 +1,7 @@
 import { isCountryCode } from "@/lib/countries";
 import { zoneCountries } from "@/lib/rules/area";
 import { isIsoDate, isoDate } from "@/lib/dates";
+import { appliesToPassport } from "@/lib/rules/visa";
 import type { RuleSource, TaxRule, VisaRule, Zone } from "@/types/rules";
 
 const FEBRUARY = 2;
@@ -30,15 +31,14 @@ function validityOverlaps(a: VisaRule, b: VisaRule): boolean {
   );
 }
 
-function coversPassport(rule: VisaRule, passport: string): boolean {
-  if (rule.exemptPassports.includes(passport)) return false;
-  return rule.passports === "all" || rule.passports.includes(passport);
-}
-
 function sharedPassports(a: VisaRule, b: VisaRule): string[] | "all" {
   if (a.passports === "all" && b.passports === "all") return "all";
   const listed = a.passports === "all" ? (b.passports as string[]) : a.passports;
-  return listed.filter((passport) => coversPassport(a, passport) && coversPassport(b, passport));
+  return listed.filter((passport) => appliesToPassport(a, passport) && appliesToPassport(b, passport));
+}
+
+function exemptButListed(exempting: VisaRule, listing: VisaRule): string[] {
+  return exempting.exemptPassports.filter((passport) => appliesToPassport(listing, passport));
 }
 
 function overlapErrors(visaRules: VisaRule[]): string[] {
@@ -50,6 +50,14 @@ function overlapErrors(visaRules: VisaRule[]): string[] {
       if (shared === "all" || shared.length > 0) {
         const passports = shared === "all" ? "all passports" : shared.join(", ");
         errors.push(`visa rules ${a.id} and ${b.id}: overlap for ${passports}`);
+      }
+      for (const [exempting, listing] of [[a, b], [b, a]]) {
+        const conflicting = exemptButListed(exempting, listing);
+        if (conflicting.length > 0) {
+          errors.push(
+            `visa rules ${exempting.id} and ${listing.id}: ${conflicting.join(", ")} exempt in one, listed in the other`,
+          );
+        }
       }
     }
   });
@@ -68,6 +76,10 @@ function visaRuleErrors(rule: VisaRule, zoneIds: ReadonlySet<string>): string[] 
   }
   if (rule.passports !== "all") errors.push(...countryListErrors(label, rule.passports));
   errors.push(...countryListErrors(label, rule.exemptPassports));
+  if (rule.passports !== "all") {
+    const both = rule.passports.filter((passport) => rule.exemptPassports.includes(passport));
+    if (both.length > 0) errors.push(`${label}: ${both.join(", ")} both listed and exempt`);
+  }
   if (!Number.isInteger(rule.allowedDays) || rule.allowedDays <= 0) {
     errors.push(`${label}: allowedDays must be a positive integer`);
   }

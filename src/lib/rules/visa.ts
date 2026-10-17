@@ -38,7 +38,7 @@ export function inForce(rule: VisaRule, onDate: string): boolean {
   return !rule.validUntil || onDate <= rule.validUntil;
 }
 
-function appliesToPassport(rule: VisaRule, passportCountry: string): boolean {
+export function appliesToPassport(rule: VisaRule, passportCountry: string): boolean {
   if (rule.exemptPassports.includes(passportCountry)) return false;
   return rule.passports === "all" || rule.passports.includes(passportCountry);
 }
