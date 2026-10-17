@@ -11,6 +11,9 @@ const NON_LEAP_YEAR = 2025;
 function sourceErrors(label: string, source: RuleSource): string[] {
   const errors: string[] = [];
   if (!source.url.startsWith("https://")) errors.push(`${label}: source url must be https`);
+  if (source.verifiedAt !== null && source.verifiedAt < source.retrievedAt) {
+    errors.push(`${label}: verifiedAt before retrievedAt`);
+  }
   if (source.official && source.verifiedAt === null && !source.underReview) {
     errors.push(`${label}: official source needs verifiedAt or underReview`);
   }

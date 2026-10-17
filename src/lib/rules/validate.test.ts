@@ -29,6 +29,11 @@ describe("overlapping rules", () => {
     );
   });
 
+  it("fails when a source is verified before it was retrieved", () => {
+    const early = { ...base, id: "th-early", source: { ...base.source, verifiedAt: "2026-01-01" } };
+    expect(validateRuleSet([early], [], [])).toContain("visa rule th-early: verifiedAt before retrievedAt");
+  });
+
   it("fails the rule set", () => {
     expect(validateRuleSet([generous, strict], [], [])).toContain(
       "visa rules th-generous and th-strict: overlap for US",
