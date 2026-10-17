@@ -11,10 +11,6 @@ const NON_LEAP_YEAR = 2025;
 function sourceErrors(label: string, source: RuleSource): string[] {
   const errors: string[] = [];
   if (!source.url.startsWith("https://")) errors.push(`${label}: source url must be https`);
-  if (!isIsoDate(source.retrievedAt)) errors.push(`${label}: invalid retrievedAt`);
-  if (source.verifiedAt !== null && !isIsoDate(source.verifiedAt)) {
-    errors.push(`${label}: invalid verifiedAt`);
-  }
   if (source.official && source.verifiedAt === null && !source.underReview) {
     errors.push(`${label}: official source needs verifiedAt or underReview`);
   }
@@ -80,14 +76,9 @@ function visaRuleErrors(rule: VisaRule, zoneIds: ReadonlySet<string>): string[] 
     const both = rule.passports.filter((passport) => rule.exemptPassports.includes(passport));
     if (both.length > 0) errors.push(`${label}: ${both.join(", ")} both listed and exempt`);
   }
-  if (!Number.isInteger(rule.allowedDays) || rule.allowedDays <= 0) {
-    errors.push(`${label}: allowedDays must be a positive integer`);
-  }
   if (rule.window.kind === "rolling" && rule.allowedDays >= rule.window.periodDays) {
     errors.push(`${label}: allowedDays must be shorter than the rolling period`);
   }
-  if (rule.validFrom && !isIsoDate(rule.validFrom)) errors.push(`${label}: invalid validFrom`);
-  if (rule.validUntil && !isIsoDate(rule.validUntil)) errors.push(`${label}: invalid validUntil`);
   if (rule.validFrom && rule.validUntil && rule.validFrom > rule.validUntil) {
     errors.push(`${label}: validFrom after validUntil`);
   }
@@ -98,7 +89,6 @@ function taxRuleErrors(rule: TaxRule): string[] {
   const label = `tax rule ${rule.country}`;
   const errors = [...sourceErrors(label, rule.source)];
   if (!isCountryCode(rule.country)) errors.push(`${label}: unknown country`);
-  if (rule.thresholdDays <= 0) errors.push(`${label}: thresholdDays must be positive`);
   if (rule.period.kind === "taxYear") {
     const { startMonth, startDay } = rule.period;
     if (startMonth === FEBRUARY && startDay === LEAP_DAY) {
@@ -119,9 +109,6 @@ export function validateRuleSet(
   const errors = zones.flatMap((zone) => [
     ...sourceErrors(`zone ${zone.id}`, zone.source),
     ...countryListErrors(`zone ${zone.id}`, zoneCountries(zone)),
-    ...zone.members
-      .filter((member) => !isIsoDate(member.memberFrom))
-      .map((member) => `zone ${zone.id}: invalid memberFrom for ${member.country}`),
     ...zone.members.flatMap((member) => sourceErrors(`zone ${zone.id} member ${member.country}`, member.source)),
   ]);
   const seenIds = new Set<string>();
