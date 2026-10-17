@@ -1,17 +1,23 @@
 import fc from "fast-check";
 
 import { addDays } from "@/lib/dates";
-import { schengenVisaRules, schengenZone } from "@/lib/rules/content/schengen";
-import type { StayDates, VisaRule } from "@/types/rules";
+import { OFFICIAL_VISA_RULES, OFFICIAL_ZONES } from "@/lib/rules/content";
+import type { StayDates, VisaRule, Zone } from "@/types/rules";
 
 function schengenRuleById(id: string): VisaRule {
-  const rule = schengenVisaRules.find((candidate) => candidate.id === id);
+  const rule = OFFICIAL_VISA_RULES.find((candidate) => candidate.id === id);
   if (!rule) throw new Error(`Missing Schengen rule ${id}`);
   return rule;
 }
 
+function zoneById(id: string): Zone {
+  const zone = OFFICIAL_ZONES.find((candidate) => candidate.id === id);
+  if (!zone) throw new Error(`Missing zone ${id}`);
+  return zone;
+}
+
 export const schengenRule = schengenRuleById("schengen-short-stay");
-export const schengenZones = [schengenZone];
+export const schengenZones = [zoneById("SCHENGEN")];
 export const SCHENGEN_ALLOWED = 90;
 export const SCHENGEN_PERIOD = 180;
 

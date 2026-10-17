@@ -1,0 +1,72 @@
+{
+  "visaRules": [
+    {
+      "id": "kh-exemption-30",
+      "destination": "KH",
+      "passports": ["ID", "LA", "MY", "PH", "SG", "VN", "MV"],
+      "exemptPassports": [],
+      "allowedDays": 30,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": null,
+      "validFrom": null,
+      "validUntil": null,
+      "source": {
+        "url": "https://www.cambodiaembassyuk.org/visa-exemption/",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Royal Embassy of Cambodia in London table as of 28 Feb 2025, ordinary passports."
+      }
+    },
+    {
+      "id": "kh-exemption-15",
+      "destination": "KH",
+      "passports": ["SC"],
+      "exemptPassports": [],
+      "allowedDays": 15,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": null,
+      "validFrom": null,
+      "validUntil": null,
+      "source": {
+        "url": "https://www.cambodiaembassyuk.org/visa-exemption/",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Royal Embassy of Cambodia in London table as of 28 Feb 2025, ordinary passports."
+      }
+    },
+    {
+      "id": "kh-exemption-14",
+      "destination": "KH",
+      "passports": ["BN", "MM", "TH"],
+      "exemptPassports": [],
+      "allowedDays": 14,
+      "window": {
+        "kind": "perEntry"
+      },
+      "extensionDays": null,
+      "reportingIntervalDays": null,
+      "validFrom": null,
+      "validUntil": null,
+      "source": {
+        "url": "https://www.cambodiaembassyuk.org/visa-exemption/",
+        "official": true,
+        "retrievedAt": "2026-10-08",
+        "verifiedAt": "2026-10-17",
+        "underReview": false,
+        "note": "Royal Embassy of Cambodia in London table as of 28 Feb 2025, ordinary passports."
+      }
+    }
+  ],
+  "taxRules": [],
+  "zones": []
+}

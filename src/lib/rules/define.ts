@@ -15,14 +15,6 @@ export function defineVisaRule(input: VisaRuleInput): VisaRule {
   };
 }
 
-export function officialSource(
-  url: string,
-  retrievedAt: string,
-  note: string | null = null,
-): RuleSource {
-  return { url, official: true, retrievedAt, verifiedAt: null, note };
-}
-
 export function communitySource(url: string, retrievedAt: string, note: string): RuleSource {
-  return { url, official: false, retrievedAt, verifiedAt: null, note };
+  return { url, official: false, retrievedAt, verifiedAt: null, underReview: false, note };
 }
