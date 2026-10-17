@@ -83,7 +83,7 @@ export function findVisaRule(
   return (
     matches.sort(
       (a, b) =>
-        specificity(b, country) - specificity(a, country) || b.allowedDays - a.allowedDays,
+        specificity(b, country) - specificity(a, country) || a.allowedDays - b.allowedDays,
     )[0] ?? null
   );
 }

@@ -14,6 +14,45 @@ function sourceErrors(label: string, source: RuleSource): string[] {
   if (source.verifiedAt !== null && !isIsoDate(source.verifiedAt)) {
     errors.push(`${label}: invalid verifiedAt`);
   }
+  if (source.official && source.verifiedAt === null && !source.underReview) {
+    errors.push(`${label}: official source needs verifiedAt or underReview`);
+  }
+  return errors;
+}
+
+const OPEN_START = "0000-01-01";
+const OPEN_END = "9999-12-31";
+
+function validityOverlaps(a: VisaRule, b: VisaRule): boolean {
+  return (
+    (a.validFrom ?? OPEN_START) <= (b.validUntil ?? OPEN_END) &&
+    (b.validFrom ?? OPEN_START) <= (a.validUntil ?? OPEN_END)
+  );
+}
+
+function coversPassport(rule: VisaRule, passport: string): boolean {
+  if (rule.exemptPassports.includes(passport)) return false;
+  return rule.passports === "all" || rule.passports.includes(passport);
+}
+
+function sharedPassports(a: VisaRule, b: VisaRule): string[] | "all" {
+  if (a.passports === "all" && b.passports === "all") return "all";
+  const listed = a.passports === "all" ? (b.passports as string[]) : a.passports;
+  return listed.filter((passport) => coversPassport(a, passport) && coversPassport(b, passport));
+}
+
+function overlapErrors(visaRules: VisaRule[]): string[] {
+  const errors: string[] = [];
+  visaRules.forEach((a, index) => {
+    for (const b of visaRules.slice(index + 1)) {
+      if (a.destination !== b.destination || !validityOverlaps(a, b)) continue;
+      const shared = sharedPassports(a, b);
+      if (shared === "all" || shared.length > 0) {
+        const passports = shared === "all" ? "all passports" : shared.join(", ");
+        errors.push(`visa rules ${a.id} and ${b.id}: overlap for ${passports}`);
+      }
+    }
+  });
   return errors;
 }
 
@@ -71,6 +110,7 @@ export function validateRuleSet(
     ...zone.members
       .filter((member) => !isIsoDate(member.memberFrom))
       .map((member) => `zone ${zone.id}: invalid memberFrom for ${member.country}`),
+    ...zone.members.flatMap((member) => sourceErrors(`zone ${zone.id} member ${member.country}`, member.source)),
   ]);
   const seenIds = new Set<string>();
   for (const rule of visaRules) {
@@ -78,6 +118,7 @@ export function validateRuleSet(
     seenIds.add(rule.id);
     errors.push(...visaRuleErrors(rule, zoneIds));
   }
+  errors.push(...overlapErrors(visaRules));
   const taxCountries = new Set<string>();
   for (const rule of taxRules) {
     if (taxCountries.has(rule.country)) errors.push(`tax rule ${rule.country}: duplicate country`);
