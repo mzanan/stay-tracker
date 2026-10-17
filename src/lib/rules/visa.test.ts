@@ -11,7 +11,7 @@ import {
   schengenZones,
   staysArbitrary,
 } from "@/test/schengenFixtures";
-import { maxStayDays } from "@/lib/rules/visa";
+import { areaOf, maxStayDays, rollingUsage } from "@/lib/rules/visa";
 import type { StayDates } from "@/types/rules";
 
 function presentDays(stays: StayDates[]): Set<string> {
@@ -42,6 +42,24 @@ describe("Schengen 90/180 golden cases from the official calculator manual", () 
     ["2024-09-08", 90],
   ])("planning entry on %s allows %i days", (entryDate, expected) => {
     expect(maxStayDays(manualVisaHolder, schengenRule, schengenZones, entryDate)).toBe(expected);
+  });
+});
+
+describe("Schengen membership dates", () => {
+  const area = areaOf(schengenRule.destination, schengenZones);
+
+  it("has the 29 current members", () => {
+    expect(area.size).toBe(29);
+  });
+
+  it.each([
+    ["HR", "2022-12-01", "2023-01-10", 10],
+    ["BG", "2024-03-01", "2024-04-09", 10],
+    ["RO", "2024-03-30", "2024-03-31", 1],
+    ["FR", "2024-03-01", "2024-03-10", 10],
+  ])("counts %s days only from the day it applies the rule", (country, entry, exit, expected) => {
+    const stays: StayDates[] = [{ country, entry_date: entry, exit_date: exit }];
+    expect(rollingUsage(stays, area, SCHENGEN_PERIOD, exit)).toBe(expected);
   });
 });
 

@@ -66,7 +66,10 @@ export function validateRuleSet(
   const zoneIds = new Set(zones.map((zone) => zone.id));
   const errors = zones.flatMap((zone) => [
     ...sourceErrors(`zone ${zone.id}`, zone.source),
-    ...countryListErrors(`zone ${zone.id}`, zone.members),
+    ...countryListErrors(`zone ${zone.id}`, zone.members.map((member) => member.country)),
+    ...zone.members
+      .filter((member) => !isIsoDate(member.memberFrom))
+      .map((member) => `zone ${zone.id}: invalid memberFrom for ${member.country}`),
   ]);
   const seenIds = new Set<string>();
   for (const rule of visaRules) {

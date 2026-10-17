@@ -1,6 +1,6 @@
 import { addDays, daysBetween, trailingWindow } from "@/lib/dates";
-import { areaEntryDate, presenceDays, stayCoveringDay } from "@/lib/rules/presence";
-import type { StayDates, VisaRule, Zone } from "@/types/rules";
+import { areaEntryDate, countryArea, presenceDays, stayCoveringDay } from "@/lib/rules/presence";
+import type { Area, StayDates, VisaRule, Zone } from "@/types/rules";
 
 export interface VisaStatus {
   rule: VisaRule;
@@ -22,13 +22,14 @@ const OFFICIAL_WEIGHT = 4;
 const PASSPORT_WEIGHT = 2;
 const COUNTRY_WEIGHT = 1;
 
-export function areaOf(destination: string, zones: Zone[]): ReadonlySet<string> {
+export function areaOf(destination: string, zones: Zone[]): Area {
   const zone = zones.find((candidate) => candidate.id === destination);
-  return new Set(zone ? zone.members : [destination]);
+  if (!zone) return countryArea(destination);
+  return new Map(zone.members.map((member) => [member.country, member.memberFrom]));
 }
 
 export function destinationsFor(country: string, zones: Zone[]): string[] {
-  const zoneIds = zones.filter((zone) => zone.members.includes(country)).map((zone) => zone.id);
+  const zoneIds = zones.filter((zone) => zone.members.some((member) => member.country === country)).map((zone) => zone.id);
   return [country, ...zoneIds];
 }
 
@@ -109,7 +110,7 @@ export function rankPassports(
 
 export function rollingUsage(
   stays: StayDates[],
-  area: ReadonlySet<string>,
+  area: Area,
   periodDays: number,
   day: string,
 ): number {
