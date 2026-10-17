@@ -1,10 +1,10 @@
-import cambodia from "@/lib/rules/data/cambodia.json";
-import indonesia from "@/lib/rules/data/indonesia.json";
-import malaysia from "@/lib/rules/data/malaysia.json";
-import schengen from "@/lib/rules/data/schengen.json";
-import thailand from "@/lib/rules/data/thailand.json";
-import vietnam from "@/lib/rules/data/vietnam.json";
-import { ruleFileSchema } from "@/lib/rules/schema";
+import cambodia from "@/lib/rules/official/cambodia.json";
+import indonesia from "@/lib/rules/official/indonesia.json";
+import malaysia from "@/lib/rules/official/malaysia.json";
+import schengen from "@/lib/rules/official/schengen.json";
+import thailand from "@/lib/rules/official/thailand.json";
+import vietnam from "@/lib/rules/official/vietnam.json";
+import { ruleFileSchema } from "@/lib/schemas/rules";
 import type { TaxRule, VisaRule, Zone } from "@/types/rules";
 
 const ruleFiles = [thailand, vietnam, cambodia, indonesia, schengen, malaysia].map((file) =>

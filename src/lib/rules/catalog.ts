@@ -4,7 +4,7 @@ import {
   OFFICIAL_TAX_RULES,
   OFFICIAL_VISA_RULES,
   OFFICIAL_ZONES,
-} from "@/lib/rules/content";
+} from "@/lib/rules/official";
 import { communitySource, defineVisaRule } from "@/lib/rules/define";
 import passportIndex from "@/lib/rules/seed/passportIndex.json";
 import { countryArea } from "@/lib/rules/area";

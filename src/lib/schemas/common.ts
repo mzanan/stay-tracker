@@ -4,13 +4,17 @@ import { MESSAGES } from "@/lib/constants/messages";
 import { isCountryCode } from "@/lib/countries";
 import { isIsoDate } from "@/lib/dates";
 
-export const countryCodeSchema = z
-  .string()
-  .refine(isCountryCode, { message: MESSAGES.unknownCountry });
+export function countryCodeString(message?: string) {
+  return z.string().refine(isCountryCode, message ? { message } : undefined);
+}
 
-export const isoDateSchema = z
-  .string()
-  .refine(isIsoDate, { message: MESSAGES.invalidDate });
+export function isoDateString(message?: string) {
+  return z.string().refine(isIsoDate, message ? { message } : undefined);
+}
+
+export const countryCodeSchema = countryCodeString(MESSAGES.unknownCountry);
+
+export const isoDateSchema = isoDateString(MESSAGES.invalidDate);
 
 export const idSchema = z.uuid({ message: MESSAGES.invalidId }).toLowerCase();
 

@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { ruleSourceSchema, visaRuleSchema } from "@/lib/rules/schema";
+import { ruleSourceSchema, visaRuleSchema } from "@/lib/schemas/rules";
 import type { RuleSource, VisaRule } from "@/types/rules";
 
 export function defineVisaRule(input: z.input<typeof visaRuleSchema>): VisaRule {

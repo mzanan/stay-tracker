@@ -1,15 +1,17 @@
 import { z } from "zod";
 
-const isoDate = z.iso.date();
-const countryCode = z.string().regex(/^[A-Z]{2}$/);
+import { countryCodeString, isoDateString } from "@/lib/schemas/common";
+
+const isoDateField = isoDateString();
+const countryField = countryCodeString();
 const positiveDays = z.number().int().positive();
 
 export const ruleSourceSchema = z
   .object({
     url: z.url(),
     official: z.boolean(),
-    retrievedAt: isoDate,
-    verifiedAt: isoDate.nullable(),
+    retrievedAt: isoDateField,
+    verifiedAt: isoDateField.nullable(),
     underReview: z.boolean().default(false),
     note: z.string().nullable().default(null),
   })
@@ -24,20 +26,20 @@ export const visaRuleSchema = z
   .object({
     id: z.string().min(1),
     destination: z.string().min(1),
-    passports: z.union([z.literal("all"), z.array(countryCode)]),
-    exemptPassports: z.array(countryCode).default([]),
+    passports: z.union([z.literal("all"), z.array(countryField)]),
+    exemptPassports: z.array(countryField).default([]),
     allowedDays: positiveDays,
     window: visaWindowSchema.default({ kind: "perEntry" }),
     extensionDays: positiveDays.nullable().default(null),
     reportingIntervalDays: positiveDays.nullable().default(null),
-    validFrom: isoDate.nullable().default(null),
-    validUntil: isoDate.nullable().default(null),
+    validFrom: isoDateField.nullable().default(null),
+    validUntil: isoDateField.nullable().default(null),
     source: ruleSourceSchema,
   })
   .strict();
 
 const zoneMemberSchema = z
-  .object({ country: countryCode, memberFrom: isoDate, source: ruleSourceSchema })
+  .object({ country: countryField, memberFrom: isoDateField, source: ruleSourceSchema })
   .strict();
 
 export const zoneSchema = z
@@ -63,7 +65,7 @@ const taxPeriodSchema = z.discriminatedUnion("kind", [
 
 export const taxRuleSchema = z
   .object({
-    country: countryCode,
+    country: countryField,
     thresholdDays: positiveDays,
     period: taxPeriodSchema,
     dayCounting: z.enum(["inclusive", "midnight"]),

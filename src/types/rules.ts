@@ -6,7 +6,7 @@ import type {
   taxRuleSchema,
   visaRuleSchema,
   zoneSchema,
-} from "@/lib/rules/schema";
+} from "@/lib/schemas/rules";
 import type { Stay } from "@/types/db";
 
 export type RuleSource = z.output<typeof ruleSourceSchema>;

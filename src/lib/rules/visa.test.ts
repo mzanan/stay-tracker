@@ -11,7 +11,8 @@ import {
   schengenZones,
   staysArbitrary,
 } from "@/test/schengenFixtures";
-import { areaOf, destinationsFor, maxStayDays, rollingUsage, visaStatus } from "@/lib/rules/visa";
+import { areaOf, destinationsFor, findVisaRule, maxStayDays, rollingUsage, visaStatus } from "@/lib/rules/visa";
+import { officialRuleById } from "@/test/ruleLookup";
 import type { StayDates } from "@/types/rules";
 
 function presentDays(stays: StayDates[]): Set<string> {
@@ -123,5 +124,14 @@ describe("Schengen 90/180 properties", () => {
         expect(maxStayDays(stays, schengenRule, schengenZones, entryDate)).toBe(SCHENGEN_ALLOWED);
       }),
     );
+  });
+});
+
+describe("rule resolution", () => {
+  it("picks the most conservative rule when two rules tie", () => {
+    const base = officialRuleById("th-exemption-30");
+    const generous = { ...base, id: "th-generous", passports: ["US"], allowedDays: 60 };
+    const strict = { ...base, id: "th-strict", passports: ["US", "CA"], allowedDays: 30 };
+    expect(findVisaRule([generous, strict], [], "TH", "US", "2026-10-17")?.id).toBe("th-strict");
   });
 });
