@@ -65,7 +65,7 @@ function leftAreaBetween(
 ): boolean {
   return stays.some(
     (stay) =>
-      !area.has(stay.country) &&
+      !inAreaOn(area, stay.country, laterDate(stay.entry_date, from)) &&
       stay.entry_date <= to &&
       (stay.exit_date === null || stay.exit_date >= from),
   );
@@ -87,11 +87,14 @@ export function areaEntryDate(
   let stay = current;
   for (;;) {
     const entry = stay.entry_date;
+    const memberFrom = area.get(stay.country);
+    if (memberFrom !== undefined && entry < memberFrom) return memberFrom;
     const previous = stays
       .filter(
         (candidate) =>
           candidate !== stay &&
-          area.has(candidate.country) &&
+          candidate.exit_date !== null &&
+          inAreaOn(area, candidate.country, candidate.exit_date) &&
           candidate.entry_date < entry &&
           continuesInto(candidate, stay),
       )

@@ -28,8 +28,14 @@ export function areaOf(destination: string, zones: Zone[]): Area {
   return new Map(zone.members.map((member) => [member.country, member.memberFrom]));
 }
 
-export function destinationsFor(country: string, zones: Zone[]): string[] {
-  const zoneIds = zones.filter((zone) => zone.members.some((member) => member.country === country)).map((zone) => zone.id);
+function isZoneMember(zone: Zone, country: string, onDate: string | null): boolean {
+  return zone.members.some(
+    (member) => member.country === country && (onDate === null || onDate >= member.memberFrom),
+  );
+}
+
+export function destinationsFor(country: string, zones: Zone[], onDate: string | null = null): string[] {
+  const zoneIds = zones.filter((zone) => isZoneMember(zone, country, onDate)).map((zone) => zone.id);
   return [country, ...zoneIds];
 }
 
@@ -50,7 +56,7 @@ export function isExempt(
   passportCountry: string,
   onDate: string,
 ): boolean {
-  const destinations = destinationsFor(country, zones);
+  const destinations = destinationsFor(country, zones, onDate);
   return rules.some(
     (rule) =>
       destinations.includes(rule.destination) &&
@@ -73,7 +79,7 @@ export function findVisaRule(
   passportCountry: string,
   onDate: string,
 ): VisaRule | null {
-  const destinations = destinationsFor(country, zones);
+  const destinations = destinationsFor(country, zones, onDate);
   const matches = rules.filter(
     (rule) =>
       destinations.includes(rule.destination) &&

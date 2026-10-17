@@ -11,7 +11,7 @@ import {
   schengenZones,
   staysArbitrary,
 } from "@/test/schengenFixtures";
-import { areaOf, maxStayDays, rollingUsage } from "@/lib/rules/visa";
+import { areaOf, destinationsFor, maxStayDays, rollingUsage, visaStatus } from "@/lib/rules/visa";
 import type { StayDates } from "@/types/rules";
 
 function presentDays(stays: StayDates[]): Set<string> {
@@ -60,6 +60,47 @@ describe("Schengen membership dates", () => {
   ])("counts %s days only from the day it applies the rule", (country, entry, exit, expected) => {
     const stays: StayDates[] = [{ country, entry_date: entry, exit_date: exit }];
     expect(rollingUsage(stays, area, SCHENGEN_PERIOD, exit)).toBe(expected);
+  });
+
+  it.each([
+    [
+      "a stay that starts before the country joined",
+      [{ country: "BG", entry_date: "2024-01-01", exit_date: "2024-06-01" }],
+      "2024-04-10",
+      { entryDate: "2024-03-31", daysUsed: 11, mustLeaveBy: "2024-06-28", overstayed: false },
+    ],
+    [
+      "an open stay that spans the join date",
+      [{ country: "HR", entry_date: "2022-12-01", exit_date: null }],
+      "2023-01-05",
+      { entryDate: "2023-01-01", daysUsed: 5, mustLeaveBy: "2023-03-31", overstayed: false },
+    ],
+    [
+      "a move from a country that had not joined yet",
+      [
+        { country: "HR", entry_date: "2022-12-01", exit_date: "2022-12-31" },
+        { country: "SI", entry_date: "2022-12-31", exit_date: null },
+      ],
+      "2023-01-10",
+      { entryDate: "2022-12-31", daysUsed: 11, mustLeaveBy: "2023-03-30", overstayed: false },
+    ],
+    [
+      "a stay in a country that had not joined yet between two zone stays",
+      [
+        { country: "SI", entry_date: "2022-10-01", exit_date: "2022-10-31" },
+        { country: "HR", entry_date: "2022-10-31", exit_date: "2022-11-30" },
+        { country: "SI", entry_date: "2022-11-30", exit_date: null },
+      ],
+      "2022-12-10",
+      { entryDate: "2022-11-30", daysUsed: 42, mustLeaveBy: "2023-01-27", overstayed: false },
+    ],
+  ])("reports %s from the membership date", (_, stays, today, expected) => {
+    expect(visaStatus(stays as StayDates[], schengenRule, schengenZones, today)).toMatchObject(expected);
+  });
+
+  it("does not apply the Schengen rule before a country joined", () => {
+    expect(destinationsFor("HR", schengenZones, "2022-12-31")).toEqual(["HR"]);
+    expect(destinationsFor("HR", schengenZones, "2023-01-01")).toEqual(["HR", "SCHENGEN"]);
   });
 });
 
