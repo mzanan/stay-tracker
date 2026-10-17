@@ -10,7 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "rules:import": "node scripts/importPassportIndex.mjs"
+    "rules:import": "node scripts/importPassportIndex.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
@@ -33,7 +34,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
     "eslint-plugin-unused-imports": "^4.4.1",
+    "fast-check": "^4.10.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.11"
   }
 }
