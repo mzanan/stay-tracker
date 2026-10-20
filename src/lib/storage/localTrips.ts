@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { MESSAGES } from "@/lib/constants/messages";
+
 import { countryCodeSchema, idSchema, isoDateSchema } from "@/lib/schemas/common";
 
 const STORAGE_KEY = "stay-tracker:v1";
@@ -40,6 +42,7 @@ export const EMPTY_TRIPS: LocalTrips = { version: 1, passports: [], stays: [] };
 
 let cachedRaw: string | null | undefined;
 let cachedTrips: LocalTrips = EMPTY_TRIPS;
+let sessionLoss: DataLoss | null = null;
 
 function readRaw(): string | null {
   try {
@@ -72,20 +75,29 @@ function validRecords<T>(schema: z.ZodType<T>, records: unknown[]): T[] {
   });
 }
 
+export type DataLoss = { kind: "all" } | { kind: "records"; trips: number; passports: number };
+
 export interface ParsedLocalTrips {
   trips: LocalTrips;
-  complete: boolean;
+  loss: DataLoss | null;
 }
 
 export function parseLocalTrips(raw: string | null): ParsedLocalTrips {
-  if (raw === null) return { trips: EMPTY_TRIPS, complete: true };
+  if (raw === null) return { trips: EMPTY_TRIPS, loss: null };
   const shape = storedShapeSchema.safeParse(parseJson(raw));
-  if (!shape.success) return { trips: EMPTY_TRIPS, complete: false };
+  if (!shape.success) return { trips: EMPTY_TRIPS, loss: { kind: "all" } };
   const passports = validRecords(localPassportSchema, shape.data.passports);
   const stays = validRecords(localStaySchema, shape.data.stays);
-  const complete =
-    passports.length === shape.data.passports.length && stays.length === shape.data.stays.length;
-  return { trips: { version: 1, passports, stays }, complete };
+  const lostTrips = shape.data.stays.length - stays.length;
+  const lostPassports = shape.data.passports.length - passports.length;
+  const loss: DataLoss | null =
+    lostTrips + lostPassports > 0 ? { kind: "records", trips: lostTrips, passports: lostPassports } : null;
+  return { trips: { version: 1, passports, stays }, loss };
+}
+
+export function dataLossMessage(loss: DataLoss): string {
+  if (loss.kind === "all") return MESSAGES.allDataUnreadable;
+  return loss.trips > 0 ? MESSAGES.tripsUnreadable(loss.trips) : MESSAGES.passportsUnreadable;
 }
 
 export function readLocalTrips(): LocalTrips {
@@ -93,9 +105,21 @@ export function readLocalTrips(): LocalTrips {
   if (raw === cachedRaw) return cachedTrips;
   cachedRaw = raw;
   const parsed = parseLocalTrips(raw);
-  if (!parsed.complete && raw !== null) keepUnreadable(raw);
+  if (parsed.loss && raw !== null) {
+    keepUnreadable(raw);
+    sessionLoss = parsed.loss;
+  }
   cachedTrips = parsed.trips;
   return cachedTrips;
+}
+
+export function readSessionDataLoss(): DataLoss | null {
+  readLocalTrips();
+  return sessionLoss;
+}
+
+export function noDataLoss(): DataLoss | null {
+  return null;
 }
 
 export function writeLocalTrips(next: LocalTrips): boolean {

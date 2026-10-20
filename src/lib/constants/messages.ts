@@ -21,6 +21,10 @@ export const MESSAGES = {
   saveLocalFailed: "Could not save in this browser. Check that site storage is allowed.",
   stillThereNotStarted: "You can only mark that you are still there on a trip that has already started",
   tooFarAhead: (latestDay: string) => `Trips can be planned up to ${latestDay}. Check the year`,
+  allDataUnreadable: "Your saved trips could not be read. Add them again.",
+  tripsUnreadable: (count: number) =>
+    count === 1 ? "1 trip could not be read. Add it again." : `${count} trips could not be read. Add them again.`,
+  passportsUnreadable: "Some saved passports could not be read. Add them again.",
   openStay: (country: string) => `You are still in ${country}. Add your exit date first`,
   overlap: (entryDate: string) => `Overlaps a stay that starts on ${entryDate}`,
   splitStay: (date: string) =>

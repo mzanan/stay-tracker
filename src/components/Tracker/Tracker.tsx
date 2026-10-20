@@ -4,6 +4,7 @@ import { use } from "react";
 import { browser } from "react-dom";
 
 import { AppHeader } from "@/components/Tracker/AppHeader";
+import { DataLossNotice } from "@/components/Tracker/DataLossNotice";
 import { FirstUse } from "@/components/Tracker/FirstUse";
 import { LocalDataBanner } from "@/components/Tracker/LocalDataBanner";
 import { ReentryCalendar } from "@/components/Tracker/ReentryCalendar";
@@ -21,6 +22,7 @@ export function Tracker() {
   return (
     <div className="flex flex-col gap-4">
       <LocalDataBanner />
+      {tracker.dataLossNotice && <DataLossNotice message={tracker.dataLossNotice} />}
       <AppHeader
         passports={tracker.passports}
         lastPassportLocked={tracker.lastPassportLocked}

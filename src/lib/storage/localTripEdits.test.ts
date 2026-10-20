@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { MESSAGES } from "@/lib/constants/messages";
-import { EMPTY_TRIPS, parseLocalTrips, type LocalTrips } from "@/lib/storage/localTrips";
+import { dataLossMessage, EMPTY_TRIPS, parseLocalTrips, type LocalTrips } from "@/lib/storage/localTrips";
 import { addPassport, changePassport, removePassport, removeStay, saveStay } from "@/lib/storage/localTripEdits";
 
 const ID_A = "00000000-0000-4000-8000-00000000000a";
@@ -130,12 +130,15 @@ describe("local trip edits", () => {
 
 describe("parseLocalTrips", () => {
   it("returns empty trips when nothing is stored", () => {
-    expect(parseLocalTrips(null)).toEqual({ trips: EMPTY_TRIPS, complete: true });
+    expect(parseLocalTrips(null)).toEqual({ trips: EMPTY_TRIPS, loss: null });
   });
 
   it("flags unreadable data as incomplete", () => {
-    expect(parseLocalTrips("{not json")).toEqual({ trips: EMPTY_TRIPS, complete: false });
-    expect(parseLocalTrips(JSON.stringify({ version: 2, passports: [], stays: [] })).complete).toBe(false);
+    expect(parseLocalTrips("{not json")).toEqual({ trips: EMPTY_TRIPS, loss: { kind: "all" } });
+    expect(parseLocalTrips(JSON.stringify({ version: 2, passports: [], stays: [] })).loss).toEqual({
+      kind: "all",
+    });
+    expect(dataLossMessage({ kind: "all" })).toBe(MESSAGES.allDataUnreadable);
   });
 
   it("keeps the valid records when one record is broken", () => {
@@ -148,7 +151,11 @@ describe("parseLocalTrips", () => {
       ],
     });
     const parsed = parseLocalTrips(raw);
-    expect(parsed.complete).toBe(false);
+    expect(parsed.loss).toEqual({ kind: "records", trips: 1, passports: 0 });
+    expect(dataLossMessage({ kind: "records", trips: 1, passports: 0 })).toBe(
+      "1 trip could not be read. Add it again.",
+    );
+    expect(dataLossMessage({ kind: "records", trips: 0, passports: 1 })).toBe(MESSAGES.passportsUnreadable);
     expect(parsed.trips.passports).toHaveLength(1);
     expect(parsed.trips.stays.map((stay) => stay.id)).toEqual([ID_B]);
   });

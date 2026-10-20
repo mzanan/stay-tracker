@@ -5,7 +5,10 @@ import { MESSAGES } from "@/lib/constants/messages";
 import { SCHENGEN_RULE, SCHENGEN_ZONES } from "@/lib/rules/schengen";
 import {
   EMPTY_TRIPS,
+  dataLossMessage,
+  noDataLoss,
   readLocalTrips,
+  readSessionDataLoss,
   subscribeLocalTrips,
   writeLocalTrips,
   type LocalTrips,
@@ -34,6 +37,7 @@ export interface TrackerActions {
 
 export function useTracker() {
   const trips = useSyncExternalStore(subscribeLocalTrips, readLocalTrips, () => EMPTY_TRIPS);
+  const dataLoss = useSyncExternalStore(subscribeLocalTrips, readSessionDataLoss, noDataLoss);
   const today = useToday();
   const [tripDrawer, setTripDrawer] = useState<TripDrawerTarget | null>(null);
 
@@ -78,6 +82,7 @@ export function useTracker() {
     view,
     overstays,
     overstayIds,
+    dataLossNotice: dataLoss ? dataLossMessage(dataLoss) : null,
     passports: trips.passports,
     lastPassportLocked: lastPassportLocked(trips.passports.length, trips.stays.length),
     stays,
