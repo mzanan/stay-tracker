@@ -22,13 +22,47 @@ export function addPassport(
   };
 }
 
-export function removePassport(trips: LocalTrips, id: string): LocalTrips {
+export function lastPassportLocked(passportCount: number, stayCount: number): boolean {
+  return passportCount === 1 && stayCount > 0;
+}
+
+export function changePassport(
+  trips: LocalTrips,
+  id: string,
+  input: unknown,
+): ActionResult<LocalTrips> {
+  const passport = parseInput(passportInputSchema, input, MESSAGES.invalidPassport);
+  if (!passport.ok) return passport;
+  if (!trips.passports.some((existing) => existing.id === id)) {
+    return { ok: false, error: MESSAGES.passportNotFound };
+  }
+  if (trips.passports.some((existing) => existing.id !== id && existing.country === passport.data.country)) {
+    return { ok: false, error: MESSAGES.passportAlreadyAdded };
+  }
   return {
-    ...trips,
+    ok: true,
+    data: {
+      ...trips,
+      passports: trips.passports.map((existing) =>
+        existing.id === id ? { id, ...passport.data } : existing,
+      ),
+    },
+  };
+}
+
+export function removePassport(trips: LocalTrips, id: string): ActionResult<LocalTrips> {
+  if (lastPassportLocked(trips.passports.length, trips.stays.length)) {
+    return { ok: false, error: MESSAGES.lastPassportWithTrips };
+  }
+  return {
+    ok: true,
+    data: {
+      ...trips,
     passports: trips.passports.filter((passport) => passport.id !== id),
     stays: trips.stays.map((stay) =>
       stay.passport_id === id ? { ...stay, passport_id: null } : stay,
     ),
+    },
   };
 }
 

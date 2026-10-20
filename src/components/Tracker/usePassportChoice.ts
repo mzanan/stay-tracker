@@ -8,6 +8,7 @@ import type { LocalPassport } from "@/lib/storage/localTrips";
 export function usePassportChoice(passports: LocalPassport[], actions: TrackerActions) {
   const [country, setCountry] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [changingId, setChangingId] = useState<string | null>(null);
 
   const options = useMemo(
     () => countryOptionsExcept(passports.map((passport) => passport.country)),
@@ -23,6 +24,21 @@ export function usePassportChoice(passports: LocalPassport[], actions: TrackerAc
     onAdded?.();
   };
 
+  const change = () => {
+    if (!changingId) return;
+    if (!country) return setError(MESSAGES.choosePassport);
+    const result = actions.changePassport(changingId, country);
+    if (!result.ok) return setError(result.error);
+    setCountry(null);
+    setError(null);
+    setChangingId(null);
+  };
+
+  const startChange = (id: string) => {
+    setChangingId(id);
+    setError(null);
+  };
+
   const remove = (id: string) => {
     const result = actions.removePassport(id);
     setError(result.ok ? null : result.error);
@@ -33,5 +49,15 @@ export function usePassportChoice(passports: LocalPassport[], actions: TrackerAc
     setError(null);
   };
 
-  return { options, country, choose, error, add, remove };
+  return {
+    options,
+    country,
+    choose,
+    error,
+    changing: changingId !== null,
+    submit: () => (changingId ? change() : add()),
+    add,
+    startChange,
+    remove,
+  };
 }

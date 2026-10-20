@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { MESSAGES } from "@/lib/constants/messages";
 import { EMPTY_TRIPS, parseLocalTrips, type LocalTrips } from "@/lib/storage/localTrips";
-import { addPassport, removePassport, removeStay, saveStay } from "@/lib/storage/localTripEdits";
+import { addPassport, changePassport, removePassport, removeStay, saveStay } from "@/lib/storage/localTripEdits";
 
 const ID_A = "00000000-0000-4000-8000-00000000000a";
 const ID_B = "00000000-0000-4000-8000-00000000000b";
@@ -73,12 +73,46 @@ describe("local trip edits", () => {
   it("clears the passport of stays when the passport is removed", () => {
     const trips: LocalTrips = {
       version: 1,
-      passports: [{ id: ID_A, country: "AR", expires_on: null }],
+      passports: [
+        { id: ID_A, country: "AR", expires_on: null },
+        { id: ID_C, country: "BR", expires_on: null },
+      ],
       stays: [{ id: ID_B, country: "ES", entry_date: "2026-10-01", exit_date: null, passport_id: ID_A }],
     };
-    const result = removePassport(trips, ID_A);
-    expect(result.passports).toEqual([]);
+    const result = unwrap(removePassport(trips, ID_A));
+    expect(result.passports).toEqual([{ id: ID_C, country: "BR", expires_on: null }]);
     expect(result.stays[0].passport_id).toBeNull();
+  });
+
+  it("keeps the last passport while there are trips, and lets it go when there are none", () => {
+    const withTrip = unwrap(
+      saveStay(
+        unwrap(addPassport(EMPTY_TRIPS, { country: "AR" }, ID_A)),
+        { country: "ES", entry_date: "2026-10-01", exit_date: "2026-10-05" },
+        TODAY,
+        ID_B,
+      ),
+    );
+    expect(removePassport(withTrip, ID_A)).toEqual({ ok: false, error: MESSAGES.lastPassportWithTrips });
+    expect(unwrap(removePassport(removeStay(withTrip, ID_B), ID_A)).passports).toEqual([]);
+  });
+
+  it("changes a passport country and keeps its trips", () => {
+    const trips = unwrap(
+      saveStay(
+        unwrap(addPassport(EMPTY_TRIPS, { country: "AR" }, ID_A)),
+        { country: "ES", entry_date: "2026-10-01", exit_date: "2026-10-05" },
+        TODAY,
+        ID_B,
+      ),
+    );
+    const changed = unwrap(changePassport(trips, ID_A, { country: "IT" }));
+    expect(changed.passports).toEqual([{ id: ID_A, country: "IT", expires_on: null }]);
+    expect(changed.stays).toEqual(trips.stays);
+    expect(changePassport(trips, ID_C, { country: "IT" })).toEqual({
+      ok: false,
+      error: MESSAGES.passportNotFound,
+    });
   });
 });
 

@@ -21,7 +21,11 @@ export function Tracker() {
   return (
     <div className="flex flex-col gap-4">
       <LocalDataBanner />
-      <AppHeader passports={tracker.passports} actions={tracker.actions} />
+      <AppHeader
+        passports={tracker.passports}
+        lastPassportLocked={tracker.lastPassportLocked}
+        actions={tracker.actions}
+      />
       {tracker.passports.length === 0 ? (
         <FirstUse actions={tracker.actions} onAddFirstTrip={tracker.openNewTrip} />
       ) : (

@@ -10,7 +10,14 @@ import {
   writeLocalTrips,
   type LocalTrips,
 } from "@/lib/storage/localTrips";
-import { addPassport, removePassport, removeStay, saveStay } from "@/lib/storage/localTripEdits";
+import {
+  addPassport,
+  changePassport,
+  lastPassportLocked,
+  removePassport,
+  removeStay,
+  saveStay,
+} from "@/lib/storage/localTripEdits";
 import { newestFirst } from "@/lib/stays";
 import { buildTripView, tripOverstays } from "@/lib/tripView";
 import type { ActionResult } from "@/types/actions";
@@ -19,6 +26,7 @@ export type TripDrawerTarget = { mode: "new" } | { mode: "edit"; stayId: string 
 
 export interface TrackerActions {
   addPassport: (country: string) => ActionResult;
+  changePassport: (id: string, country: string) => ActionResult;
   removePassport: (id: string) => ActionResult;
   saveStay: (input: unknown, stayId?: string) => ActionResult;
   removeStay: (id: string) => ActionResult;
@@ -59,7 +67,8 @@ export function useTracker() {
 
   const actions: TrackerActions = {
     addPassport: (country) => commit(addPassport(trips, { country }, crypto.randomUUID())),
-    removePassport: (id) => commit({ ok: true, data: removePassport(trips, id) }),
+    changePassport: (id, country) => commit(changePassport(trips, id, { country })),
+    removePassport: (id) => commit(removePassport(trips, id)),
     saveStay: (input, stayId) => commit(saveStay(trips, input, today, crypto.randomUUID(), stayId)),
     removeStay: (id) => commit({ ok: true, data: removeStay(trips, id) }),
   };
@@ -70,6 +79,7 @@ export function useTracker() {
     overstays,
     overstayIds,
     passports: trips.passports,
+    lastPassportLocked: lastPassportLocked(trips.passports.length, trips.stays.length),
     stays,
     actions,
     tripDrawer,

@@ -14,10 +14,11 @@ import type { LocalPassport } from "@/lib/storage/localTrips";
 
 interface PassportPickerProps {
   passports: LocalPassport[];
+  locked: boolean;
   actions: TrackerActions;
 }
 
-export function PassportPicker({ passports, actions }: PassportPickerProps) {
+export function PassportPicker({ passports, locked, actions }: PassportPickerProps) {
   const [open, setOpen] = useState(false);
   const passport = usePassportChoice(passports, actions);
   const summary = passportsSummary(passports.map((item) => item.country));
@@ -47,19 +48,32 @@ export function PassportPicker({ passports, actions }: PassportPickerProps) {
             {passports.map((item) => (
               <li key={item.id} className="flex items-center justify-between py-2">
                 <span className="text-base">{countryName(item.country)}</span>
-                <Button
-                  variant="ghost"
-                  size="icon-touch"
-                  aria-label={`Remove ${countryName(item.country)} passport`}
-                  onClick={() => passport.remove(item.id)}
-                >
-                  <XIcon />
-                </Button>
+                {locked ? (
+                  <Button
+                    variant="link"
+                    size="touch"
+                    className="px-0 text-sm text-muted-foreground"
+                    onClick={() => passport.startChange(item.id)}
+                  >
+                    Wrong passport? Change it
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon-touch"
+                    aria-label={`Remove ${countryName(item.country)} passport`}
+                    onClick={() => passport.remove(item.id)}
+                  >
+                    <XIcon />
+                  </Button>
+                )}
               </li>
             ))}
           </ul>
           <Field data-invalid={passport.error !== null}>
-            <FieldLabel htmlFor="add-passport">Add a passport</FieldLabel>
+            <FieldLabel htmlFor="add-passport">
+              {passport.changing ? "Your correct passport" : "Add a passport"}
+            </FieldLabel>
             <CountrySelect
               id="add-passport"
               options={passport.options}
@@ -70,8 +84,8 @@ export function PassportPicker({ passports, actions }: PassportPickerProps) {
             />
             <FieldError>{passport.error}</FieldError>
           </Field>
-          <Button size="xl" onClick={() => passport.add()}>
-            Add passport
+          <Button size="xl" onClick={passport.submit}>
+            {passport.changing ? "Change passport" : "Add passport"}
           </Button>
         </div>
       </DrawerContent>

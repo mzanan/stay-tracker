@@ -2,6 +2,7 @@ export const MESSAGES = {
   notAuthenticated: "Not authenticated",
   passportNotFound: "Passport not found",
   passportAlreadyAdded: "Passport already added",
+  lastPassportWithTrips: "Your trips need a passport. Change it instead",
   stayNotFound: "Stay not found",
   invalidPassport: "Invalid passport",
   invalidStay: "Invalid stay",
