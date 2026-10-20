@@ -4,6 +4,7 @@ import type { TrackerActions } from "@/components/Tracker/useTracker";
 import { MESSAGES } from "@/lib/constants/messages";
 import { countryOptions } from "@/lib/countries";
 import { schengenMembersOn } from "@/lib/rules/schengen";
+import { latestPlannableDay } from "@/lib/stays";
 import type { LocalStay } from "@/lib/storage/localTrips";
 
 interface UseTripFormInput {
@@ -50,6 +51,7 @@ export function useTripForm({ stay, today, actions, onDone }: UseTripFormInput) 
 
   return {
     countries,
+    latestDay: latestPlannableDay(today),
     country,
     setCountry,
     entryDate,

@@ -20,6 +20,7 @@ export const MESSAGES = {
   exitOrStillThere: "Add the exit date, or mark that you are still there",
   saveLocalFailed: "Could not save in this browser. Check that site storage is allowed.",
   stillThereNotStarted: "You can only mark that you are still there on a trip that has already started",
+  tooFarAhead: (latestDay: string) => `Trips can be planned up to ${latestDay}. Check the year`,
   openStay: (country: string) => `You are still in ${country}. Add your exit date first`,
   overlap: (entryDate: string) => `Overlaps a stay that starts on ${entryDate}`,
   splitStay: (date: string) =>

@@ -39,6 +39,7 @@ export function TripForm({ stay, today, actions, onDone }: TripFormProps) {
             type="date"
             fieldSize="lg"
             required
+            max={form.latestDay}
             value={form.entryDate}
             onChange={(event) => form.setEntryDate(event.target.value)}
             onBlur={form.checkExit}
@@ -62,6 +63,7 @@ export function TripForm({ stay, today, actions, onDone }: TripFormProps) {
               type="date"
               fieldSize="lg"
               aria-invalid={form.exitError !== null}
+              max={form.latestDay}
               value={form.exitDate}
               onChange={(event) => form.setExitDate(event.target.value)}
               onBlur={form.checkExit}

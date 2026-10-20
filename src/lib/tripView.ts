@@ -1,8 +1,9 @@
-import { addDays, daysBetween, endOfMonth, laterDate } from "@/lib/dates";
+import { addDays, daysBetween, earlierDate, endOfMonth, laterDate } from "@/lib/dates";
 import { inAreaOn } from "@/lib/rules/area";
 import { areaEntryDate, stayCoveringDay } from "@/lib/rules/presence";
 import { reentryOutlook, reentryTimeline, type EntryOption } from "@/lib/rules/reentry";
 import { areaOf, inForce, isExempt, latestExitIfStaying, visaStatus } from "@/lib/rules/visa";
+import { latestPlannableDay } from "@/lib/stays";
 import type { Area, StayDates, VisaRule, Zone } from "@/types/rules";
 
 export interface CalendarEntry extends EntryOption {
@@ -62,7 +63,7 @@ export function reentryHorizonEnd(
 ): string {
   const last = lastAreaDay(stays, areaOf(rule.destination, zones));
   const settled = last ? addDays(last, daysUntilFullStay(rule)) : today;
-  return endOfMonth(laterDate(today, settled));
+  return endOfMonth(earlierDate(laterDate(today, settled), latestPlannableDay(today)));
 }
 
 function closeCurrentStayToday(stays: StayDates[], area: Area, today: string): StayDates[] {

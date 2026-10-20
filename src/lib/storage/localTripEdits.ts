@@ -2,7 +2,14 @@ import { MESSAGES } from "@/lib/constants/messages";
 import { passportInputSchema } from "@/lib/schemas/passports";
 import { stayInputSchema } from "@/lib/schemas/stays";
 import type { LocalTrips } from "@/lib/storage/localTrips";
-import { stayConflictMessage, stillThereNotStarted, validateStay } from "@/lib/stays";
+import { formatFullDay } from "@/lib/formatDate";
+import {
+  beyondPlanningHorizon,
+  latestPlannableDay,
+  stayConflictMessage,
+  stillThereNotStarted,
+  validateStay,
+} from "@/lib/stays";
 import { parseInput } from "@/lib/validation";
 import type { ActionResult } from "@/types/actions";
 
@@ -77,6 +84,9 @@ export function saveStay(
   if (!stay.ok) return stay;
   if (stillThereNotStarted(stay.data, today)) {
     return { ok: false, error: MESSAGES.stillThereNotStarted };
+  }
+  if (beyondPlanningHorizon(stay.data, today)) {
+    return { ok: false, error: MESSAGES.tooFarAhead(formatFullDay(latestPlannableDay(today))) };
   }
   if (stayId && !trips.stays.some((existing) => existing.id === stayId)) {
     return { ok: false, error: MESSAGES.stayNotFound };

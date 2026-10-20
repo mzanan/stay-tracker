@@ -64,6 +64,18 @@ describe("local trip edits", () => {
     ).toEqual({ ok: false, error: MESSAGES.stillThereNotStarted });
   });
 
+  it("rejects trips more than a year ahead", () => {
+    expect(
+      saveStay(EMPTY_TRIPS, { country: "IT", entry_date: "2062-10-01", exit_date: "2062-10-05" }, TODAY, ID_A),
+    ).toEqual({ ok: false, error: MESSAGES.tooFarAhead("20 Oct 2027") });
+    expect(
+      saveStay(EMPTY_TRIPS, { country: "IT", entry_date: "2027-10-01", exit_date: "2027-10-21" }, TODAY, ID_A),
+    ).toEqual({ ok: false, error: MESSAGES.tooFarAhead("20 Oct 2027") });
+    expect(
+      saveStay(EMPTY_TRIPS, { country: "IT", entry_date: "2027-10-10", exit_date: "2027-10-20" }, TODAY, ID_A).ok,
+    ).toBe(true);
+  });
+
   it("rejects editing a stay that does not exist", () => {
     expect(
       saveStay(EMPTY_TRIPS, { country: "ES", entry_date: "2026-10-01" }, TODAY, ID_A, ID_C),

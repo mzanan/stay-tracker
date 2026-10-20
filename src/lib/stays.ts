@@ -1,11 +1,13 @@
 import { MESSAGES } from "@/lib/constants/messages";
 import { countryName } from "@/lib/countries";
-import { laterDate } from "@/lib/dates";
+import { addDays, laterDate } from "@/lib/dates";
 import { formatFullDay } from "@/lib/formatDate";
 import type { StayInput } from "@/lib/schemas/stays";
 import type { Stay } from "@/types/db";
 
 type StayRange = Pick<Stay, "entry_date" | "exit_date">;
+
+const PLANNING_HORIZON_DAYS = 365;
 type ExistingStay = Pick<Stay, "id" | "country" | "entry_date" | "exit_date">;
 
 export type StayConflict =
@@ -48,6 +50,15 @@ export function stayConflictMessage(conflict: StayConflict): string {
 
 export function exitBeforeEntry(entryDate: string, exitDate: string | null): boolean {
   return exitDate !== null && exitDate !== "" && exitDate < entryDate;
+}
+
+export function latestPlannableDay(today: string): string {
+  return addDays(today, PLANNING_HORIZON_DAYS);
+}
+
+export function beyondPlanningHorizon(range: StayRange, today: string): boolean {
+  const latest = latestPlannableDay(today);
+  return range.entry_date > latest || (range.exit_date !== null && range.exit_date > latest);
 }
 
 export function stillThereNotStarted(range: StayRange, today: string): boolean {
