@@ -37,9 +37,15 @@ export interface TripViewInput<T extends StayDates = StayDates> {
   today: string;
 }
 
+export type LastLegalDay =
+  | { kind: "noDaysLeft" }
+  | { kind: "passed"; date: string }
+  | { kind: "upcoming"; date: string };
+
 export interface TripOverstay<T extends StayDates> {
   areaEntryDate: string;
   lastLegalDay: string;
+  lastDay: LastLegalDay;
   daysOver: number;
   staysOver: T[];
 }
@@ -131,12 +137,18 @@ function areaVisits<T extends StayDates>(stays: T[], area: Area, today: string):
   return visits;
 }
 
+function describeLastLegalDay(entry: string, lastLegalDay: string, today: string): LastLegalDay {
+  if (lastLegalDay < entry) return { kind: "noDaysLeft" };
+  if (lastLegalDay < today) return { kind: "passed", date: lastLegalDay };
+  return { kind: "upcoming", date: lastLegalDay };
+}
+
 function visitOverstay<T extends StayDates>(
   input: TripViewInput<T>,
   entry: string,
   visitStays: T[],
 ): TripOverstay<T> | null {
-  const { rule, zones, stays } = input;
+  const { rule, zones, stays, today } = input;
   const exits = visitStays.map((stay) => stay.exit_date);
   if (exits.includes(null) || !inForce(rule, entry)) return null;
   const visitEnd = (exits as string[]).sort().at(-1) as string;
@@ -145,6 +157,7 @@ function visitOverstay<T extends StayDates>(
   return {
     areaEntryDate: entry,
     lastLegalDay,
+    lastDay: describeLastLegalDay(entry, lastLegalDay, today),
     daysOver: daysBetween(lastLegalDay, visitEnd),
     staysOver: visitStays.filter((stay) => (stay.exit_date as string) > lastLegalDay),
   };

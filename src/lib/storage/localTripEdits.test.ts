@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import { MESSAGES } from "@/lib/constants/messages";
-import { dataLossMessage, EMPTY_TRIPS, parseLocalTrips, type LocalTrips } from "@/lib/storage/localTrips";
+import {
+  dataLossMessage,
+  EMPTY_TRIPS,
+  parseLocalTrips,
+  type DataLoss,
+  type LocalTrips,
+} from "@/lib/storage/localTrips";
 import { addPassport, changePassport, removePassport, removeStay, saveStay } from "@/lib/storage/localTripEdits";
 
 const ID_A = "00000000-0000-4000-8000-00000000000a";
@@ -160,14 +166,19 @@ describe("parseLocalTrips", () => {
       ],
     });
     const parsed = parseLocalTrips(raw);
-    expect(parsed.loss).toEqual({ kind: "records", trips: 1, passports: 0 });
-    expect(dataLossMessage({ kind: "records", trips: 1, passports: 0 })).toBe(
-      "1 trip could not be read. Add it again.",
+    expect(parsed.loss).toEqual({
+      kind: "records",
+      trips: [{ country: "FR", entryDate: "2026-09-01" }],
+      passports: 0,
+    });
+    expect(dataLossMessage(parsed.loss as DataLoss)).toBe(
+      "1 trip (France from 1 Sept 2026) could not be read. Add it again.",
     );
-    expect(dataLossMessage({ kind: "records", trips: 0, passports: 1 })).toBe(
+    expect(dataLossMessage({ kind: "records", trips: [], passports: 1 })).toBe(
       "1 passport could not be read. Add it again.",
     );
-    expect(dataLossMessage({ kind: "records", trips: 2, passports: 1 })).toBe(
+    const unknownTrip = { country: null, entryDate: null };
+    expect(dataLossMessage({ kind: "records", trips: [unknownTrip, unknownTrip], passports: 1 })).toBe(
       "2 trips and 1 passport could not be read. Add them again.",
     );
     expect(parsed.trips.passports).toHaveLength(1);

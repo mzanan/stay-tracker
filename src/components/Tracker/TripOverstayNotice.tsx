@@ -24,9 +24,11 @@ export function TripOverstayNotice({ overstays, today }: TripOverstayNoticeProps
           {overstays.map((overstay) => (
             <li key={overstay.areaEntryDate}>
               Entering {formatDay(overstay.areaEntryDate, today)}: {formatDays(overstay.daysOver)} over.{" "}
-              {overstay.lastLegalDay < overstay.areaEntryDate
-                ? "No days left on that date."
-                : `You can stay until ${formatDay(overstay.lastLegalDay, today)} inclusive.`}
+              {overstay.lastDay.kind === "noDaysLeft" && "No days left on that date."}
+              {overstay.lastDay.kind === "passed" &&
+                `Your last legal day was ${formatDay(overstay.lastDay.date, today)}.`}
+              {overstay.lastDay.kind === "upcoming" &&
+                `You can stay until ${formatDay(overstay.lastDay.date, today)} inclusive.`}
             </li>
           ))}
         </ul>

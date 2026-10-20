@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import { MESSAGES } from "@/lib/constants/messages";
+import { countryName } from "@/lib/countries";
+import { formatFullDay } from "@/lib/formatDate";
 
 import { countryCodeSchema, idSchema, isoDateSchema } from "@/lib/schemas/common";
 
@@ -85,7 +87,12 @@ function validRecords<T>(schema: z.ZodType<T>, records: unknown[]): T[] {
   });
 }
 
-export type DataLoss = { kind: "all" } | { kind: "records"; trips: number; passports: number };
+export interface LostTrip {
+  country: string | null;
+  entryDate: string | null;
+}
+
+export type DataLoss = { kind: "all" } | { kind: "records"; trips: LostTrip[]; passports: number };
 
 export interface ParsedLocalTrips {
   trips: LocalTrips;
@@ -98,11 +105,31 @@ export function parseLocalTrips(raw: string | null): ParsedLocalTrips {
   if (!shape.success) return { trips: EMPTY_TRIPS, loss: { kind: "all" } };
   const passports = validRecords(localPassportSchema, shape.data.passports);
   const stays = validRecords(localStaySchema, shape.data.stays);
-  const lostTrips = shape.data.stays.length - stays.length;
+  const lostTrips = shape.data.stays
+    .filter((record) => !localStaySchema.safeParse(record).success)
+    .map(lostTrip);
   const lostPassports = shape.data.passports.length - passports.length;
   const loss: DataLoss | null =
-    lostTrips + lostPassports > 0 ? { kind: "records", trips: lostTrips, passports: lostPassports } : null;
+    lostTrips.length + lostPassports > 0
+      ? { kind: "records", trips: lostTrips, passports: lostPassports }
+      : null;
   return { trips: { version: 1, passports, stays }, loss };
+}
+
+function lostTrip(record: unknown): LostTrip {
+  const fields = z.object({ country: z.unknown(), entry_date: z.unknown() }).partial().safeParse(record);
+  const country = countryCodeSchema.safeParse(fields.data?.country);
+  const entryDate = isoDateSchema.safeParse(fields.data?.entry_date);
+  return {
+    country: country.success ? country.data : null,
+    entryDate: entryDate.success ? entryDate.data : null,
+  };
+}
+
+function lostTripLabel(trip: LostTrip): string | null {
+  if (!trip.country) return null;
+  const from = trip.entryDate ? ` from ${formatFullDay(trip.entryDate)}` : "";
+  return `${countryName(trip.country)}${from}`;
 }
 
 function countOf(count: number, noun: string): string | null {
@@ -112,10 +139,13 @@ function countOf(count: number, noun: string): string | null {
 
 export function dataLossMessage(loss: DataLoss): string {
   if (loss.kind === "all") return MESSAGES.allDataUnreadable;
-  const records = [countOf(loss.trips, "trip"), countOf(loss.passports, "passport")].filter(
+  const labels = loss.trips.map(lostTripLabel).filter((label) => label !== null);
+  const trips = countOf(loss.trips.length, "trip");
+  const tripsWithLabels = trips && labels.length > 0 ? `${trips} (${labels.join(", ")})` : trips;
+  const records = [tripsWithLabels, countOf(loss.passports, "passport")].filter(
     (part) => part !== null,
   );
-  return MESSAGES.recordsUnreadable(records.join(" and "), loss.trips + loss.passports === 1);
+  return MESSAGES.recordsUnreadable(records.join(" and "), loss.trips.length + loss.passports === 1);
 }
 
 export function readLocalTrips(): LocalTrips {

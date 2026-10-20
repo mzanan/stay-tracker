@@ -1,5 +1,6 @@
 "use client";
 
+import { DeleteTripButton } from "@/components/Tracker/DeleteTripButton";
 import { useTripForm } from "@/components/Tracker/useTripForm";
 import type { TrackerActions } from "@/components/Tracker/useTracker";
 import { Button } from "@/components/ui/button";
@@ -77,11 +78,7 @@ export function TripForm({ stay, today, actions, onDone }: TripFormProps) {
         <Button type="submit" size="xl">
           Save trip
         </Button>
-        {stay && (
-          <Button type="button" variant="destructive" size="xl" onClick={form.remove}>
-            Delete trip
-          </Button>
-        )}
+        {stay && <DeleteTripButton onConfirm={form.remove} />}
       </div>
     </form>
   );

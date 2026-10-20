@@ -132,14 +132,26 @@ describe("tripOverstays", () => {
   it("flags a planned trip that goes over the limit", () => {
     const planned = stay("ES", "2026-11-01", "2027-02-05");
     expect(overstays([planned])).toEqual([
-      { areaEntryDate: "2026-11-01", lastLegalDay: "2027-01-29", daysOver: 7, staysOver: [planned] },
+      {
+        areaEntryDate: "2026-11-01",
+        lastLegalDay: "2027-01-29",
+        lastDay: { kind: "upcoming", date: "2027-01-29" },
+        daysOver: 7,
+        staysOver: [planned],
+      },
     ]);
   });
 
   it("flags the current stay when its planned exit is past the last legal day", () => {
     const current = stay("ES", "2026-10-01", "2027-01-10");
     expect(overstays([current])).toEqual([
-      { areaEntryDate: "2026-10-01", lastLegalDay: "2026-12-29", daysOver: 12, staysOver: [current] },
+      {
+        areaEntryDate: "2026-10-01",
+        lastLegalDay: "2026-12-29",
+        lastDay: { kind: "upcoming", date: "2026-12-29" },
+        daysOver: 12,
+        staysOver: [current],
+      },
     ]);
   });
 
@@ -147,7 +159,13 @@ describe("tripOverstays", () => {
     const spain = stay("ES", "2026-01-01", "2026-02-15");
     const france = stay("FR", "2026-02-15", "2026-04-10");
     expect(overstays([spain, france])).toEqual([
-      { areaEntryDate: "2026-01-01", lastLegalDay: "2026-03-31", daysOver: 10, staysOver: [france] },
+      {
+        areaEntryDate: "2026-01-01",
+        lastLegalDay: "2026-03-31",
+        lastDay: { kind: "passed", date: "2026-03-31" },
+        daysOver: 10,
+        staysOver: [france],
+      },
     ]);
   });
 
