@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Stay Tracker",
-  description: "Track visa days and tax residency days per country.",
+  description: "Schengen 90/180 tracker: how long you can stay and when you can come back.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

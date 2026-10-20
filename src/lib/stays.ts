@@ -1,4 +1,6 @@
+import { MESSAGES } from "@/lib/constants/messages";
 import { laterDate } from "@/lib/dates";
+import { formatFullDay } from "@/lib/formatDate";
 import type { StayInput } from "@/lib/schemas/stays";
 import type { Stay } from "@/types/db";
 
@@ -35,6 +37,16 @@ function isSameStay(a: StayInput, b: ExistingStay): boolean {
   );
 }
 
+export function stayConflictMessage(conflict: StayConflict): string {
+  if (conflict.kind === "passportNotFound") return MESSAGES.passportNotFound;
+  if (conflict.kind === "overlap") return MESSAGES.overlap(formatFullDay(conflict.entryDate));
+  return MESSAGES.splitStay(formatFullDay(conflict.date));
+}
+
+export function exitBeforeEntry(entryDate: string, exitDate: string | null): boolean {
+  return exitDate !== null && exitDate !== "" && exitDate < entryDate;
+}
+
 export function coversDay(range: StayRange, day: string): boolean {
   return range.entry_date <= day && (range.exit_date === null || day <= range.exit_date);
 }
@@ -65,4 +77,8 @@ export function validateStay(
     if (!crossedBorder) return { kind: "splitStay", date: day };
   }
   return null;
+}
+
+export function newestFirst<T extends StayRange>(stays: T[]): T[] {
+  return [...stays].sort((a, b) => b.entry_date.localeCompare(a.entry_date));
 }

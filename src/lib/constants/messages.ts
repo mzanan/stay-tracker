@@ -14,6 +14,10 @@ export const MESSAGES = {
   removePassportFailed: "Could not remove the passport",
   saveStayFailed: "Could not save the stay",
   removeStayFailed: "Could not remove the stay",
+  chooseCountry: "Choose a country",
+  choosePassport: "Choose your passport",
+  exitOrStillThere: "Add the exit date, or mark that you are still there",
+  saveLocalFailed: "Could not save in this browser. Check that site storage is allowed.",
   overlap: (entryDate: string) => `Overlaps a stay that starts on ${entryDate}`,
   splitStay: (date: string) =>
     `Another stay in this country touches ${date} with no other country that day; extend that stay instead`,

@@ -2,9 +2,13 @@ import type { z } from "zod";
 
 import type { ActionResult } from "@/types/actions";
 
+function fieldLabel(path: PropertyKey[]): string {
+  const field = path.map(String).join(" ").replaceAll("_", " ");
+  return field.charAt(0).toUpperCase() + field.slice(1);
+}
+
 function describeIssue(issue: z.core.$ZodIssue): string {
-  const field = issue.path.join(".");
-  return field ? `${field}: ${issue.message}` : issue.message;
+  return issue.path.length > 0 ? `${fieldLabel(issue.path)}: ${issue.message}` : issue.message;
 }
 
 export function parseInput<S extends z.ZodType>(

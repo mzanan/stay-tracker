@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { MESSAGES } from "@/lib/constants/messages";
+import { exitBeforeEntry } from "@/lib/stays";
 
 import { countryCodeSchema, emptyAsNull, idSchema, isoDateSchema } from "./common";
 
@@ -12,7 +13,7 @@ export const stayInputSchema = z
     passport_id: emptyAsNull(idSchema),
   })
   .refine(
-    (stay) => stay.exit_date === null || stay.exit_date >= stay.entry_date,
+    (stay) => !exitBeforeEntry(stay.entry_date, stay.exit_date),
     { message: MESSAGES.exitBeforeEntry, path: ["exit_date"] },
   );
 
