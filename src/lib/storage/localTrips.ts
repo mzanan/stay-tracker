@@ -176,6 +176,7 @@ export function writeLocalTrips(next: LocalTrips): boolean {
   } catch {
     return false;
   }
+  sessionLoss = null;
   window.dispatchEvent(new Event(CHANGE_EVENT));
   return true;
 }

@@ -12,14 +12,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 
 interface DeleteTripButtonProps {
   onConfirm: () => void;
 }
 
 export function DeleteTripButton({ onConfirm }: DeleteTripButtonProps) {
+  const dialog = useConfirmDialog(onConfirm);
   return (
-    <AlertDialog>
+    <AlertDialog open={dialog.open} onOpenChange={dialog.setOpen}>
       <AlertDialogTrigger render={<Button type="button" variant="destructive" size="xl" />}>
         Delete trip
       </AlertDialogTrigger>
@@ -30,7 +32,7 @@ export function DeleteTripButton({ onConfirm }: DeleteTripButtonProps) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel size="touch">Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" size="touch" onClick={onConfirm}>
+          <AlertDialogAction variant="destructive" size="touch" onClick={dialog.confirm}>
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>
