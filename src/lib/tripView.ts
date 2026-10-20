@@ -1,7 +1,8 @@
 import { addDays, daysBetween, endOfMonth, laterDate } from "@/lib/dates";
-import { stayCoveringDay } from "@/lib/rules/presence";
+import { inAreaOn } from "@/lib/rules/area";
+import { areaEntryDate, stayCoveringDay } from "@/lib/rules/presence";
 import { reentryOutlook, reentryTimeline, type EntryOption } from "@/lib/rules/reentry";
-import { areaOf, isExempt, visaStatus } from "@/lib/rules/visa";
+import { areaOf, inForce, isExempt, latestExitIfStaying, visaStatus } from "@/lib/rules/visa";
 import type { Area, StayDates, VisaRule, Zone } from "@/types/rules";
 
 export interface CalendarEntry extends EntryOption {
@@ -27,12 +28,19 @@ export type TripView =
     }
   | { kind: "outside"; daysUsed: number; calendar: CalendarEntry[] };
 
-export interface TripViewInput {
+export interface TripViewInput<T extends StayDates = StayDates> {
   rule: VisaRule;
   zones: Zone[];
   passportCountries: string[];
-  stays: StayDates[];
+  stays: T[];
   today: string;
+}
+
+export interface TripOverstay<T extends StayDates> {
+  areaEntryDate: string;
+  lastLegalDay: string;
+  daysOver: number;
+  staysOver: T[];
 }
 
 function lastAreaDay(stays: StayDates[], area: Area): string | null {
@@ -110,4 +118,42 @@ export function buildTripView(input: TripViewInput): TripView {
       booked: stayCoveringDay(stays, area, option.entryDate) !== null,
     })),
   };
+}
+
+function areaVisits<T extends StayDates>(stays: T[], area: Area, today: string): Map<string, T[]> {
+  const visits = new Map<string, T[]>();
+  for (const stay of stays) {
+    if (!inAreaOn(area, stay.country, stay.exit_date ?? today)) continue;
+    const entry = areaEntryDate(stays, area, stay);
+    visits.set(entry, [...(visits.get(entry) ?? []), stay]);
+  }
+  return visits;
+}
+
+function visitOverstay<T extends StayDates>(
+  input: TripViewInput<T>,
+  entry: string,
+  visitStays: T[],
+): TripOverstay<T> | null {
+  const { rule, zones, stays } = input;
+  const exits = visitStays.map((stay) => stay.exit_date);
+  if (exits.includes(null) || !inForce(rule, entry)) return null;
+  const visitEnd = (exits as string[]).sort().at(-1) as string;
+  const lastLegalDay = latestExitIfStaying(stays, rule, zones, entry);
+  if (visitEnd <= lastLegalDay) return null;
+  return {
+    areaEntryDate: entry,
+    lastLegalDay,
+    daysOver: daysBetween(lastLegalDay, visitEnd),
+    staysOver: visitStays.filter((stay) => (stay.exit_date as string) > lastLegalDay),
+  };
+}
+
+export function tripOverstays<T extends StayDates>(input: TripViewInput<T>): TripOverstay<T>[] {
+  if (exemptPassport(input)) return [];
+  const area = areaOf(input.rule.destination, input.zones);
+  return [...areaVisits(input.stays, area, input.today)]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([entry, visitStays]) => visitOverstay(input, entry, visitStays))
+    .filter((overstay) => overstay !== null);
 }

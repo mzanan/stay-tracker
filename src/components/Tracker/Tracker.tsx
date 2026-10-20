@@ -11,6 +11,7 @@ import { RuleSourceLine } from "@/components/Tracker/RuleSourceLine";
 import { StatusCard } from "@/components/Tracker/StatusCard";
 import { TripDrawer } from "@/components/Tracker/TripDrawer";
 import { TripList } from "@/components/Tracker/TripList";
+import { TripOverstayNotice } from "@/components/Tracker/TripOverstayNotice";
 import { useTracker } from "@/components/Tracker/useTracker";
 
 export function Tracker() {
@@ -25,6 +26,9 @@ export function Tracker() {
         <FirstUse actions={tracker.actions} onAddFirstTrip={tracker.openNewTrip} />
       ) : (
         <>
+          {tracker.overstays.length > 0 && (
+            <TripOverstayNotice overstays={tracker.overstays} today={tracker.today} />
+          )}
           {tracker.view.kind === "outside" ? (
             <ReentryCalendar view={tracker.view} today={tracker.today} />
           ) : (
@@ -33,6 +37,7 @@ export function Tracker() {
           <TripList
             stays={tracker.stays}
             today={tracker.today}
+            overstayIds={tracker.overstayIds}
             onAdd={tracker.openNewTrip}
             onOpen={tracker.openTrip}
           />

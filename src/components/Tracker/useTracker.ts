@@ -12,7 +12,7 @@ import {
 } from "@/lib/storage/localTrips";
 import { addPassport, removePassport, removeStay, saveStay } from "@/lib/storage/localTripEdits";
 import { newestFirst } from "@/lib/stays";
-import { buildTripView } from "@/lib/tripView";
+import { buildTripView, tripOverstays } from "@/lib/tripView";
 import type { ActionResult } from "@/types/actions";
 
 export type TripDrawerTarget = { mode: "new" } | { mode: "edit"; stayId: string };
@@ -29,16 +29,21 @@ export function useTracker() {
   const today = useToday();
   const [tripDrawer, setTripDrawer] = useState<TripDrawerTarget | null>(null);
 
-  const view = useMemo(
-    () =>
-      buildTripView({
-        rule: SCHENGEN_RULE,
-        zones: SCHENGEN_ZONES,
-        passportCountries: trips.passports.map((passport) => passport.country),
-        stays: trips.stays,
-        today,
-      }),
+  const viewInput = useMemo(
+    () => ({
+      rule: SCHENGEN_RULE,
+      zones: SCHENGEN_ZONES,
+      passportCountries: trips.passports.map((passport) => passport.country),
+      stays: trips.stays,
+      today,
+    }),
     [trips, today],
+  );
+  const view = useMemo(() => buildTripView(viewInput), [viewInput]);
+  const overstays = useMemo(() => tripOverstays(viewInput), [viewInput]);
+  const overstayIds = useMemo(
+    () => new Set(overstays.flatMap((overstay) => overstay.staysOver.map((stay) => stay.id))),
+    [overstays],
   );
   const stays = useMemo(() => newestFirst(trips.stays), [trips.stays]);
   const editingStay =
@@ -62,6 +67,8 @@ export function useTracker() {
   return {
     today,
     view,
+    overstays,
+    overstayIds,
     passports: trips.passports,
     stays,
     actions,
