@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle/ThemeToggle";
 import { PassportPicker } from "@/components/Tracker/PassportPicker";
 import type { TrackerActions } from "@/components/Tracker/useTracker";
 import { Title } from "@/components/ui/title";
@@ -15,9 +16,12 @@ export function AppHeader({ passports, lastPassportLocked, actions }: AppHeaderP
       <Title as="h2" size="md" className="shrink-0">
         Stay Tracker
       </Title>
-      {passports.length > 0 && (
-        <PassportPicker passports={passports} locked={lastPassportLocked} actions={actions} />
-      )}
+      <div className="flex min-w-0 items-center gap-1">
+        {passports.length > 0 && (
+          <PassportPicker passports={passports} locked={lastPassportLocked} actions={actions} />
+        )}
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

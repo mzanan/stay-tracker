@@ -21,13 +21,13 @@ export function Tracker() {
 
   return (
     <div className="flex flex-col gap-4">
-      <LocalDataBanner />
-      {tracker.dataLossNotice && <DataLossNotice message={tracker.dataLossNotice} />}
       <AppHeader
         passports={tracker.passports}
         lastPassportLocked={tracker.lastPassportLocked}
         actions={tracker.actions}
       />
+      <LocalDataBanner />
+      {tracker.dataLossNotice && <DataLossNotice message={tracker.dataLossNotice} />}
       {tracker.passports.length === 0 ? (
         <FirstUse actions={tracker.actions} onAddFirstTrip={tracker.openNewTrip} />
       ) : (
