@@ -2,14 +2,8 @@ import { MESSAGES } from "@/lib/constants/messages";
 import { passportInputSchema } from "@/lib/schemas/passports";
 import { stayInputSchema } from "@/lib/schemas/stays";
 import type { LocalTrips } from "@/lib/storage/localTrips";
-import { formatFullDay } from "@/lib/formatDate";
-import {
-  beyondPlanningHorizon,
-  latestPlannableDay,
-  stayConflictMessage,
-  stillThereNotStarted,
-  validateStay,
-} from "@/lib/stays";
+import { lastPassportLocked } from "@/lib/passports";
+import { stayConflictMessage, validateStay } from "@/lib/stays";
 import { parseInput } from "@/lib/validation";
 import type { ActionResult } from "@/types/actions";
 
@@ -27,10 +21,6 @@ export function addPassport(
     ok: true,
     data: { ...trips, passports: [...trips.passports, { id: newId, ...passport.data }] },
   };
-}
-
-export function lastPassportLocked(passportCount: number, stayCount: number): boolean {
-  return passportCount === 1 && stayCount > 0;
 }
 
 export function changePassport(
@@ -65,10 +55,10 @@ export function removePassport(trips: LocalTrips, id: string): ActionResult<Loca
     ok: true,
     data: {
       ...trips,
-    passports: trips.passports.filter((passport) => passport.id !== id),
-    stays: trips.stays.map((stay) =>
-      stay.passport_id === id ? { ...stay, passport_id: null } : stay,
-    ),
+      passports: trips.passports.filter((passport) => passport.id !== id),
+      stays: trips.stays.map((stay) =>
+        stay.passport_id === id ? { ...stay, passport_id: null } : stay,
+      ),
     },
   };
 }
@@ -82,17 +72,11 @@ export function saveStay(
 ): ActionResult<LocalTrips> {
   const stay = parseInput(stayInputSchema, input, MESSAGES.invalidStay);
   if (!stay.ok) return stay;
-  if (stillThereNotStarted(stay.data, today)) {
-    return { ok: false, error: MESSAGES.stillThereNotStarted };
-  }
-  if (beyondPlanningHorizon(stay.data, today)) {
-    return { ok: false, error: MESSAGES.tooFarAhead(formatFullDay(latestPlannableDay(today))) };
-  }
   if (stayId && !trips.stays.some((existing) => existing.id === stayId)) {
     return { ok: false, error: MESSAGES.stayNotFound };
   }
   const passportIds = trips.passports.map((passport) => passport.id);
-  const conflict = validateStay(stay.data, trips.stays, passportIds, stayId);
+  const conflict = validateStay(stay.data, trips.stays, passportIds, today, stayId);
   if (conflict) return { ok: false, error: stayConflictMessage(conflict) };
 
   const stays = stayId

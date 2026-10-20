@@ -52,8 +52,18 @@ function readRaw(): string | null {
   }
 }
 
+function hasUnreadableCopy(raw: string): boolean {
+  const storage = window.localStorage;
+  for (let index = 0; index < storage.length; index++) {
+    const key = storage.key(index);
+    if (key?.startsWith(UNREADABLE_KEY_PREFIX) && storage.getItem(key) === raw) return true;
+  }
+  return false;
+}
+
 function keepUnreadable(raw: string): void {
   try {
+    if (hasUnreadableCopy(raw)) return;
     window.localStorage.setItem(`${UNREADABLE_KEY_PREFIX}${Date.now()}`, raw);
   } catch {
     return;
@@ -95,9 +105,17 @@ export function parseLocalTrips(raw: string | null): ParsedLocalTrips {
   return { trips: { version: 1, passports, stays }, loss };
 }
 
+function countOf(count: number, noun: string): string | null {
+  if (count === 0) return null;
+  return count === 1 ? `1 ${noun}` : `${count} ${noun}s`;
+}
+
 export function dataLossMessage(loss: DataLoss): string {
   if (loss.kind === "all") return MESSAGES.allDataUnreadable;
-  return loss.trips > 0 ? MESSAGES.tripsUnreadable(loss.trips) : MESSAGES.passportsUnreadable;
+  const records = [countOf(loss.trips, "trip"), countOf(loss.passports, "passport")].filter(
+    (part) => part !== null,
+  );
+  return MESSAGES.recordsUnreadable(records.join(" and "), loss.trips + loss.passports === 1);
 }
 
 export function readLocalTrips(): LocalTrips {

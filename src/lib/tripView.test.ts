@@ -109,7 +109,7 @@ describe("reentryHorizonEnd", () => {
 
   it("never reaches past a year from today, even with a far-future trip already stored", () => {
     const typo = [stay("ES", "2062-02-01", "2062-02-10")];
-    expect(reentryHorizonEnd(typo, SCHENGEN_RULE, SCHENGEN_ZONES, TODAY)).toBe("2027-10-31");
+    expect(reentryHorizonEnd(typo, SCHENGEN_RULE, SCHENGEN_ZONES, TODAY)).toBe("2027-10-18");
   });
 
   it("reaches past a planned trip until the allowance settles", () => {

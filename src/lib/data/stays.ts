@@ -27,6 +27,7 @@ async function findStayConflict(
   executor: DbExecutor,
   userId: string,
   input: StayInput,
+  today: string,
   ignoreStayId?: string,
 ): Promise<StayConflict | null> {
   const [existingStays, passports] = await Promise.all([
@@ -37,6 +38,7 @@ async function findStayConflict(
     input,
     existingStays,
     passports.map((passport) => passport.id),
+    today,
     ignoreStayId,
   );
 }
@@ -44,9 +46,10 @@ async function findStayConflict(
 export async function insertStay(
   userId: string,
   input: StayInput,
+  today: string,
 ): Promise<StayWriteResult> {
   return db.transaction(async (tx) => {
-    const conflict = await findStayConflict(tx, userId, input);
+    const conflict = await findStayConflict(tx, userId, input, today);
     if (conflict) return { kind: "conflict", conflict };
     const [row] = await tx
       .insert(stays)
@@ -60,12 +63,13 @@ export async function updateStay(
   userId: string,
   id: string,
   input: StayInput,
+  today: string,
 ): Promise<StayWriteResult> {
   const ownedBy = and(eq(stays.user_id, userId), eq(stays.id, id));
   return db.transaction(async (tx) => {
     const [existing] = await tx.select({ id: stays.id }).from(stays).where(ownedBy);
     if (!existing) return { kind: "notFound" };
-    const conflict = await findStayConflict(tx, userId, input, id);
+    const conflict = await findStayConflict(tx, userId, input, today, id);
     if (conflict) return { kind: "conflict", conflict };
     await tx.update(stays).set(input).where(ownedBy);
     return { kind: "ok", id };

@@ -58,6 +58,15 @@ describe("local trip edits", () => {
     ).toEqual({ ok: false, error: MESSAGES.openStay("Italy") });
   });
 
+  it("asks for the exit date when a still-there stay has a later trip", () => {
+    const trips = unwrap(
+      saveStay(EMPTY_TRIPS, { country: "IT", entry_date: "2026-12-01", exit_date: "2026-12-10" }, TODAY, ID_A),
+    );
+    expect(
+      saveStay(trips, { country: "FR", entry_date: "2026-10-01", exit_date: "" }, TODAY, ID_B),
+    ).toEqual({ ok: false, error: MESSAGES.laterTrip("1 Dec 2026") });
+  });
+
   it("rejects marking a trip that has not started as still there", () => {
     expect(
       saveStay(EMPTY_TRIPS, { country: "IT", entry_date: "2026-11-05", exit_date: "" }, TODAY, ID_A),
@@ -155,7 +164,12 @@ describe("parseLocalTrips", () => {
     expect(dataLossMessage({ kind: "records", trips: 1, passports: 0 })).toBe(
       "1 trip could not be read. Add it again.",
     );
-    expect(dataLossMessage({ kind: "records", trips: 0, passports: 1 })).toBe(MESSAGES.passportsUnreadable);
+    expect(dataLossMessage({ kind: "records", trips: 0, passports: 1 })).toBe(
+      "1 passport could not be read. Add it again.",
+    );
+    expect(dataLossMessage({ kind: "records", trips: 2, passports: 1 })).toBe(
+      "2 trips and 1 passport could not be read. Add them again.",
+    );
     expect(parsed.trips.passports).toHaveLength(1);
     expect(parsed.trips.stays.map((stay) => stay.id)).toEqual([ID_B]);
   });

@@ -13,10 +13,10 @@ import {
   writeLocalTrips,
   type LocalTrips,
 } from "@/lib/storage/localTrips";
+import { lastPassportLocked } from "@/lib/passports";
 import {
   addPassport,
   changePassport,
-  lastPassportLocked,
   removePassport,
   removeStay,
   saveStay,

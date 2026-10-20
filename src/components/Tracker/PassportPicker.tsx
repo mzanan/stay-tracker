@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDownIcon, XIcon } from "lucide-react";
 
-import { usePassportChoice } from "@/components/Tracker/usePassportChoice";
+import { usePassportPicker } from "@/components/Tracker/usePassportPicker";
 import type { TrackerActions } from "@/components/Tracker/useTracker";
 import { Button } from "@/components/ui/button";
 import { CountrySelect } from "@/components/ui/countrySelect";
@@ -19,17 +18,16 @@ interface PassportPickerProps {
 }
 
 export function PassportPicker({ passports, locked, actions }: PassportPickerProps) {
-  const [open, setOpen] = useState(false);
-  const passport = usePassportChoice(passports, actions);
+  const { open, openDrawer, onOpenChange, passport } = usePassportPicker(passports, actions);
   const summary = passportsSummary(passports.map((item) => item.country));
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={onOpenChange}>
       <Button
         variant="outline"
         size="touch"
         className="min-w-0 shrink"
-        onClick={() => setOpen(true)}
+        onClick={openDrawer}
         aria-label={`Your passports: ${passports.map((item) => countryName(item.country)).join(", ")}`}
       >
         <span className="truncate">{summary.name}</span>

@@ -63,7 +63,7 @@ export function reentryHorizonEnd(
 ): string {
   const last = lastAreaDay(stays, areaOf(rule.destination, zones));
   const settled = last ? addDays(last, daysUntilFullStay(rule)) : today;
-  return endOfMonth(earlierDate(laterDate(today, settled), latestPlannableDay(today)));
+  return earlierDate(endOfMonth(laterDate(today, settled)), latestPlannableDay(today));
 }
 
 function closeCurrentStayToday(stays: StayDates[], area: Area, today: string): StayDates[] {

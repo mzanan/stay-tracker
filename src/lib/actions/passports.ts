@@ -37,7 +37,8 @@ export async function removePassport(id: unknown): Promise<ActionResult> {
     const passportId = parseInput(idSchema, id, MESSAGES.passportNotFound);
     if (!passportId.ok) return passportId;
     const deleted = await deletePassport(userId, passportId.data);
-    if (!deleted) return { ok: false, error: MESSAGES.passportNotFound };
+    if (deleted === "notFound") return { ok: false, error: MESSAGES.passportNotFound };
+    if (deleted === "locked") return { ok: false, error: MESSAGES.lastPassportWithTrips };
     return { ok: true, data: undefined };
   });
 }

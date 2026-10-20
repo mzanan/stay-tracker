@@ -34,6 +34,12 @@ export function usePassportChoice(passports: LocalPassport[], actions: TrackerAc
     setChangingId(null);
   };
 
+  const cancelChange = () => {
+    setChangingId(null);
+    setCountry(null);
+    setError(null);
+  };
+
   const startChange = (id: string) => {
     setChangingId(id);
     setError(null);
@@ -58,6 +64,7 @@ export function usePassportChoice(passports: LocalPassport[], actions: TrackerAc
     submit: () => (changingId ? change() : add()),
     add,
     startChange,
+    cancelChange,
     remove,
   };
 }
