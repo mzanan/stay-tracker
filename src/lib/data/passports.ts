@@ -1,7 +1,8 @@
 import { and, asc, eq } from "drizzle-orm";
 
 import { db, type DbExecutor } from "@/lib/db";
-import { passports } from "@/lib/db/schema";
+import { passports, stays } from "@/lib/db/schema";
+import { lastPassportLocked } from "@/lib/passports";
 import type { PassportInput } from "@/lib/schemas/passports";
 import type { Passport } from "@/types/db";
 
@@ -41,10 +42,17 @@ export async function updatePassportExpiry(
   return rows.length > 0;
 }
 
-export async function deletePassport(userId: string, id: string): Promise<boolean> {
-  const rows = await db
-    .delete(passports)
-    .where(and(eq(passports.user_id, userId), eq(passports.id, id)))
-    .returning({ id: passports.id });
-  return rows.length > 0;
+export type PassportDeleteResult = "ok" | "notFound" | "locked";
+
+export async function deletePassport(userId: string, id: string): Promise<PassportDeleteResult> {
+  return db.transaction(async (tx) => {
+    const [owned, userStays] = await Promise.all([
+      listPassports(userId, tx),
+      tx.select({ id: stays.id }).from(stays).where(eq(stays.user_id, userId)),
+    ]);
+    if (!owned.some((passport) => passport.id === id)) return "notFound";
+    if (lastPassportLocked(owned.length, userStays.length)) return "locked";
+    await tx.delete(passports).where(and(eq(passports.user_id, userId), eq(passports.id, id)));
+    return "ok";
+  });
 }

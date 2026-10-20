@@ -47,6 +47,11 @@ export function eachDay(from: string, to: string): string[] {
   return days;
 }
 
+export function endOfMonth(date: string): string {
+  const [year, month] = date.split("-").map(Number);
+  return addDays(isoDate(month === 12 ? year + 1 : year, month === 12 ? 1 : month + 1, 1), -1);
+}
+
 export function trailingWindow(day: string, periodDays: number): DateRange {
   return { start: addDays(day, -(periodDays - 1)), end: day };
 }
