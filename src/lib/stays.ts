@@ -1,4 +1,5 @@
 import { MESSAGES } from "@/lib/constants/messages";
+import { countryName } from "@/lib/countries";
 import { laterDate } from "@/lib/dates";
 import { formatFullDay } from "@/lib/formatDate";
 import type { StayInput } from "@/lib/schemas/stays";
@@ -9,6 +10,7 @@ type ExistingStay = Pick<Stay, "id" | "country" | "entry_date" | "exit_date">;
 
 export type StayConflict =
   | { kind: "passportNotFound" }
+  | { kind: "openStay"; country: string }
   | { kind: "overlap"; entryDate: string }
   | { kind: "splitStay"; date: string };
 
@@ -39,12 +41,17 @@ function isSameStay(a: StayInput, b: ExistingStay): boolean {
 
 export function stayConflictMessage(conflict: StayConflict): string {
   if (conflict.kind === "passportNotFound") return MESSAGES.passportNotFound;
+  if (conflict.kind === "openStay") return MESSAGES.openStay(countryName(conflict.country));
   if (conflict.kind === "overlap") return MESSAGES.overlap(formatFullDay(conflict.entryDate));
   return MESSAGES.splitStay(formatFullDay(conflict.date));
 }
 
 export function exitBeforeEntry(entryDate: string, exitDate: string | null): boolean {
   return exitDate !== null && exitDate !== "" && exitDate < entryDate;
+}
+
+export function stillThereNotStarted(range: StayRange, today: string): boolean {
+  return range.exit_date === null && range.entry_date > today;
 }
 
 export function coversDay(range: StayRange, day: string): boolean {
@@ -61,6 +68,11 @@ export function validateStay(
     return { kind: "passportNotFound" };
   }
   const others = existingStays.filter((stay) => stay.id !== ignoreStayId);
+
+  const openStay = others.find(
+    (stay) => stay.exit_date === null && stay.entry_date < input.entry_date,
+  );
+  if (openStay) return { kind: "openStay", country: openStay.country };
 
   const overlapping = others.find(
     (stay) => staysOverlap(input, stay) || isSameStay(input, stay),

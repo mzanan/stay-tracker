@@ -18,6 +18,8 @@ export const MESSAGES = {
   choosePassport: "Choose your passport",
   exitOrStillThere: "Add the exit date, or mark that you are still there",
   saveLocalFailed: "Could not save in this browser. Check that site storage is allowed.",
+  stillThereNotStarted: "You can only mark that you are still there on a trip that has already started",
+  openStay: (country: string) => `You are still in ${country}. Add your exit date first`,
   overlap: (entryDate: string) => `Overlaps a stay that starts on ${entryDate}`,
   splitStay: (date: string) =>
     `Another stay in this country touches ${date} with no other country that day; extend that stay instead`,

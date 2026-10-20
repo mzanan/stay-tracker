@@ -7,6 +7,7 @@ import { addPassport, removePassport, removeStay, saveStay } from "@/lib/storage
 const ID_A = "00000000-0000-4000-8000-00000000000a";
 const ID_B = "00000000-0000-4000-8000-00000000000b";
 const ID_C = "00000000-0000-4000-8000-00000000000c";
+const TODAY = "2026-10-20";
 
 function unwrap(result: { ok: true; data: LocalTrips } | { ok: false; error: string }): LocalTrips {
   if (!result.ok) throw new Error(result.error);
@@ -25,13 +26,13 @@ describe("local trip edits", () => {
 
   it("adds, edits and removes a stay", () => {
     const added = unwrap(
-      saveStay(EMPTY_TRIPS, { country: "ES", entry_date: "2026-10-01", exit_date: "" }, ID_A),
+      saveStay(EMPTY_TRIPS, { country: "ES", entry_date: "2026-10-01", exit_date: "" }, TODAY, ID_A),
     );
     expect(added.stays).toEqual([
       { id: ID_A, country: "ES", entry_date: "2026-10-01", exit_date: null, passport_id: null },
     ]);
     const edited = unwrap(
-      saveStay(added, { country: "FR", entry_date: "2026-10-01", exit_date: "2026-10-05" }, ID_B, ID_A),
+      saveStay(added, { country: "FR", entry_date: "2026-10-01", exit_date: "2026-10-05" }, TODAY, ID_B, ID_A),
     );
     expect(edited.stays).toEqual([
       { id: ID_A, country: "FR", entry_date: "2026-10-01", exit_date: "2026-10-05", passport_id: null },
@@ -41,16 +42,31 @@ describe("local trip edits", () => {
 
   it("rejects overlapping stays with the shared message", () => {
     const trips = unwrap(
-      saveStay(EMPTY_TRIPS, { country: "ES", entry_date: "2026-10-01", exit_date: "2026-10-10" }, ID_A),
+      saveStay(EMPTY_TRIPS, { country: "ES", entry_date: "2026-10-01", exit_date: "2026-10-10" }, TODAY, ID_A),
     );
     expect(
-      saveStay(trips, { country: "FR", entry_date: "2026-10-05", exit_date: "2026-10-12" }, ID_B),
+      saveStay(trips, { country: "FR", entry_date: "2026-10-05", exit_date: "2026-10-12" }, TODAY, ID_B),
     ).toEqual({ ok: false, error: MESSAGES.overlap("1 Oct 2026") });
+  });
+
+  it("rejects a trip after a stay that is still open", () => {
+    const trips = unwrap(
+      saveStay(EMPTY_TRIPS, { country: "IT", entry_date: "2026-10-01", exit_date: "" }, TODAY, ID_A),
+    );
+    expect(
+      saveStay(trips, { country: "FR", entry_date: "2026-12-01", exit_date: "2026-12-10" }, TODAY, ID_B),
+    ).toEqual({ ok: false, error: MESSAGES.openStay("Italy") });
+  });
+
+  it("rejects marking a trip that has not started as still there", () => {
+    expect(
+      saveStay(EMPTY_TRIPS, { country: "IT", entry_date: "2026-11-05", exit_date: "" }, TODAY, ID_A),
+    ).toEqual({ ok: false, error: MESSAGES.stillThereNotStarted });
   });
 
   it("rejects editing a stay that does not exist", () => {
     expect(
-      saveStay(EMPTY_TRIPS, { country: "ES", entry_date: "2026-10-01" }, ID_A, ID_C),
+      saveStay(EMPTY_TRIPS, { country: "ES", entry_date: "2026-10-01" }, TODAY, ID_A, ID_C),
     ).toEqual({ ok: false, error: MESSAGES.stayNotFound });
   });
 

@@ -60,7 +60,7 @@ export function useTracker() {
   const actions: TrackerActions = {
     addPassport: (country) => commit(addPassport(trips, { country }, crypto.randomUUID())),
     removePassport: (id) => commit({ ok: true, data: removePassport(trips, id) }),
-    saveStay: (input, stayId) => commit(saveStay(trips, input, crypto.randomUUID(), stayId)),
+    saveStay: (input, stayId) => commit(saveStay(trips, input, today, crypto.randomUUID(), stayId)),
     removeStay: (id) => commit({ ok: true, data: removeStay(trips, id) }),
   };
 
